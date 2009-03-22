@@ -53,7 +53,7 @@ first_order( const std::vector< ParticleHoleState > &vec, double E,
 }
 
 Term make_first_order( const PHInteraction &Gph,
-                              const SingleParticleModelspace &spms ) {
+                       const SingleParticleModelspace &spms ) {
     return boost::bind( first_order, _1, _2, _3,
             boost::cref(Gph), boost::cref(spms) );
 }

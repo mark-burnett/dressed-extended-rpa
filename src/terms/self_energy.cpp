@@ -191,7 +191,8 @@ Term make_self_energy( const PPInteraction &Gpp,
                        const PPFromSPModelspace &hhspms,
                        const SingleParticleModelspace &spms ) {
     return boost::bind( self_energy, _1, _2, _3, boost::cref(Gpp),
-            ppms, hhms, ppspms, hhspms, spms );
+            boost::cref(ppms), boost::cref(hhms), boost::cref(ppspms),
+            boost::cref(hhspms), boost::cref(spms) );
 }
 
 } // end namespace terms

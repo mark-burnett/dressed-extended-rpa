@@ -41,6 +41,8 @@ double SE_hole_line    ( const ParticleHoleState &ph, double E,
 } // end namespace internal
 
 Term make_self_energy( const PPInteraction &Gpp,
+                       const ParticleParticleModelspace &ppms,
+                       const ParticleParticleModelspace &hhms,
                        const PPFromSPModelspace &ppspms,
                        const PPFromSPModelspace &hhspms,
                        const SingleParticleModelspace &spms );

@@ -17,7 +17,8 @@ namespace util {
 
 typedef std::complex< double > complex_t;
 typedef ublas::vector< complex_t > vector_t;
-typedef ublas::matrix< complex_t, ublas::column_major > matrix_t;
+typedef ublas::matrix< double, ublas::column_major > matrix_t;
+typedef ublas::matrix< complex_t, ublas::column_major > cmatrix_t;
 
 // --------------------------------------------------------------------
 // Linear algebra stuff

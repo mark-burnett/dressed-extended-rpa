@@ -195,7 +195,8 @@ double screening_B_term( const ParticleHoleState &ph1,
 Term make_screening( const PHInteraction &Gph,
                      const ParticleHoleModelspace   &phms,
                      const SingleParticleModelspace &spms ) {
-    return boost::bind( screening, _1, _2, _3, Gph, phms, spms );
+    return boost::bind( screening, _1, _2, _3, boost::cref(Gph),
+            boost::cref(phms), boost::cref(spms) );
 }
 
 } // end namespace terms

@@ -13,8 +13,8 @@ src_liberpa_la_SOURCES = src/angular_momentum.cpp src/io.cpp src/pandya.cpp\
 						 src/terms/first_order.cpp\
 						 src/terms/screening.cpp\
 						 src/terms/ladder.cpp\
-						 src/terms/self_energy.cpp
-src_liberpa_la_LDFLAGS = -static
+						 src/terms/self_energy.cpp\
+						 src/term_factories.cpp
 
 # --- Main programs ---
 

@@ -15,7 +15,8 @@ first_order( const std::vector< ParticleHoleState > &vec, double E,
              position_t pos, const PHInteraction &Gph,
              const SingleParticleModelspace &spms );
 
-Term make_first_order( const PHInteraction &Gph );
+Term make_first_order( const PHInteraction &Gph,
+                       const SingleParticleModelspace &spms );
 
 } // end namespace terms
 

@@ -32,4 +32,8 @@ class MatrixFactory {
         int J, parity, tz;
 };
 
+util::matrix_t
+build_static_matrix( const std::vector< Term > &terms,
+                     const std::vector< ParticleHoleState > &ph_states );
+
 #endif // _MATRIX_FACTORY_H_

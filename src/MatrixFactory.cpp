@@ -13,7 +13,7 @@ MatrixFactory::build( double E ) const {
     // Generate the dynamic elements
     int size = result.size1() / 2;
     ublas::range first_half( 0, size );
-    ublas::range second_half( size, 0 );
+    ublas::range second_half( size, 2*size );
 
     typedef ublas::matrix_range< util::matrix_t > submatrix_t;
     submatrix_t A     ( result, first_half, first_half );
@@ -24,4 +24,31 @@ MatrixFactory::build( double E ) const {
         A_star -= t( ph_states, E, ENUM_A_STAR );
     }
     return result;
+}
+
+util::matrix_t
+build_static_matrix( const std::vector< Term > &terms,
+                     const std::vector< ParticleHoleState > &ph_states ) {
+    int size = ph_states.size();
+
+    util::matrix_t m( 2 * size, 2 * size );
+    m.clear();
+
+    typedef ublas::matrix_range< util::matrix_t > submatrix_t;
+    ublas::range first_half( 0, size );
+    ublas::range second_half( size, 2*size );
+
+    submatrix_t A     ( m, first_half, first_half );
+    submatrix_t A_star( m, second_half, second_half );
+    submatrix_t B     ( m, second_half, first_half );
+    submatrix_t B_star( m, first_half, second_half );
+
+    BOOST_FOREACH( const Term &t, terms ) {
+        A      += t( ph_states, 0, ENUM_A );
+        B      += t( ph_states, 0, ENUM_B );
+        A_star -= t( ph_states, 0, ENUM_A_STAR );
+        B_star -= t( ph_states, 0, ENUM_B_STAR );
+    }
+
+    return m;
 }

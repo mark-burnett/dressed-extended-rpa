@@ -196,7 +196,7 @@ Term make_ladder( const PPInteraction &Gpp,
                   const ParticleParticleModelspace &hhms,
                   const SingleParticleModelspace &spms ) {
     return boost::bind( ladder, _1, _2, _3, boost::cref(Gpp),
-            ppms, hhms, spms );
+            boost::cref(ppms), boost::cref(hhms), boost::cref(spms) );
 }
 
 } // end namespace terms

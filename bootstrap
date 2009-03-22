@@ -6,3 +6,6 @@ aclocal -I config
 libtoolize --force --copy
 autoconf
 automake --add-missing --copy --foreign --include-deps
+
+# go ahead and run the configure script
+./configure --disable-static
