@@ -59,12 +59,6 @@ double pp_interaction_base( const ParticleParticleState    &A,
     if ( B.ip1 > B.ip2 )
         phase *= std::pow( -1, spms.j[ B.ip1 ] - spms.j[ B.ip2 ] + A.J );
 
-    if ( 3 == A.ip1 && 4 == A.ip2 && 6 == B.ip1 && 8 == B.ip2 ) {
-        std::cout << "phase -> "
-            << phase
-            << std::endl;
-    }
-
     return phase * matricies[ tz + 1 ][ (parity+1)/2 ][ A.J ] ( iA, iB );
 }
 
@@ -180,7 +174,7 @@ decode_mhj_line( const std::string &line,
     // correct for phase
     if ( ia > ib )
             V *= std::pow( -1, J + spms.j[ia] - spms.j[ib] );
-    if ( ic > ib )
+    if ( ic > id )
             V *= std::pow( -1, J + spms.j[ic] - spms.j[id] );
 
     // renormalize
