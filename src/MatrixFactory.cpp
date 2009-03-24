@@ -1,5 +1,6 @@
 #include <boost/foreach.hpp>
 #include <boost/numeric/ublas/matrix_proxy.hpp>
+#include <boost/numeric/ublas/io.hpp>
 
 #include "linalg.h"
 #include "Term.h"
@@ -16,7 +17,7 @@ MatrixFactory::build( double E ) const {
     ublas::range second_half( size, 2*size );
 
     typedef ublas::matrix_range< util::matrix_t > submatrix_t;
-    submatrix_t A     ( result, first_half, first_half );
+    submatrix_t A     ( result, first_half,  first_half );
     submatrix_t A_star( result, second_half, second_half );
 
     BOOST_FOREACH( const Term &t, dynamic_terms ) {
@@ -38,10 +39,10 @@ build_static_matrix( const std::vector< Term > &terms,
     ublas::range first_half( 0, size );
     ublas::range second_half( size, 2*size );
 
-    submatrix_t A     ( m, first_half, first_half );
+    submatrix_t A     ( m, first_half,  first_half );
     submatrix_t A_star( m, second_half, second_half );
     submatrix_t B     ( m, second_half, first_half );
-    submatrix_t B_star( m, first_half, second_half );
+    submatrix_t B_star( m, first_half,  second_half );
 
     BOOST_FOREACH( const Term &t, terms ) {
         A      += t( ph_states, 0, ENUM_A );
@@ -49,6 +50,12 @@ build_static_matrix( const std::vector< Term > &terms,
         A_star -= t( ph_states, 0, ENUM_A_STAR );
         B_star -= t( ph_states, 0, ENUM_B_STAR );
     }
+
+    /*
+    if ( 0 == ph_states[0].J ) {
+        std::cout << B << std::endl;
+    }
+    */
 
     return m;
 }

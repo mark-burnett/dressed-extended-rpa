@@ -29,6 +29,7 @@
  * Mark Burnett, March 2009
  */
 
+#include <iostream>
 #include <vector>
 
 // Constant public data members allow for a simple interface.
@@ -71,6 +72,17 @@ struct ParticleHoleState {
     int ipf;
     int ihf;
     int J;
+    bool operator<( const ParticleHoleState &sister ) const {
+        if ( ip != sister.ip )
+            return ip < sister.ip;
+        if ( ih != sister.ih )
+            return ih < sister.ih;
+        if ( ipf != sister.ipf )
+            return ipf < sister.ipf;
+        if ( ihf != sister.ihf )
+            return ihf < sister.ihf;
+        return J < sister.J;
+    }
 };
 
 // ip1 and ip2 are indecies for sp states in the sp modelspace
@@ -103,5 +115,15 @@ typedef std::vector< std::vector<
 // Functions in Modelspace.cpp
 int get_max_pp_J( const SingleParticleModelspace &spms, int tz, int parity );
 int get_max_ph_J( const SingleParticleModelspace &spms, int tz, int parity );
+
+// IO Functions
+void print_ph_modelspace_sizes( std::ostream &o,
+                                const ParticleHoleModelspace &phms );
+
+void print_sp_state( std::ostream &o, int i,
+                     const SingleParticleModelspace &spms );
+void print_ph_state( std::ostream &o,
+                     const ParticleHoleState        &ph,
+                     const SingleParticleModelspace &spms );
 
 #endif // _MODELSPACE_H_

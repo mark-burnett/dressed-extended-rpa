@@ -1,9 +1,10 @@
 #include <gtest/gtest.h>
 
+#include "pandya.h"
 #include "Modelspace.h"
 #include "Interaction.h"
 #include "modelspace_factories.h"
-#include "interaction_factories.h"
+#include "pp_interaction_factories.h"
 
 /* Single particle modelspace map for test interaction file
  * mhj file index - 1 -> my modelspace index
@@ -45,6 +46,22 @@ TEST( InteractionFactories, PPInteractionFromMHJ ) {
     EXPECT_FLOAT_EQ( -0.810887,
             Gpp( pp_t( 10, 11, -1, -1, 2 ), pp_t( 10, 11, -1, -1, 2 ) ) );
 
+    // Check a couple of things that may be failing
+    EXPECT_FLOAT_EQ( -0.090404481,
+            Gpp( pp_t( 17, 3, -1, -1, 3 ), pp_t( 13, 8, -1, -1, 3 ) ) );
+    EXPECT_FLOAT_EQ( -0.022610215,
+            Gpp( pp_t( 17, 3, -1, -1, 2 ), pp_t( 13, 8, -1, -1, 2 ) ) );
+
+    // This set was failing.
+    EXPECT_FLOAT_EQ( -0.02807734,
+            Gpp( pp_t( 7, 8, -1, -1, 1 ), pp_t( 4, 3, -1, -1, 1 ) ) );
+    EXPECT_FLOAT_EQ( -0.25176015,
+            Gpp( pp_t( 7, 8, -1, -1, 2 ), pp_t( 4, 3, -1, -1, 2 ) ) );
+    EXPECT_FLOAT_EQ( -0.033133,
+            Gpp( pp_t( 7, 8, -1, -1, 3 ), pp_t( 4, 3, -1, -1, 3 ) ) );
+    EXPECT_FLOAT_EQ( -0.31687135,
+            Gpp( pp_t( 7, 8, -1, -1, 4 ), pp_t( 4, 3, -1, -1, 4 ) ) );
+
     // A few 2+ tests
     EXPECT_FLOAT_EQ( -0.7497247700,
             Gpp( pp_t( 6, 1, -1, -1, 2 ), pp_t( 1, 6, -1, -1, 2 ) ) );
@@ -54,12 +71,19 @@ TEST( InteractionFactories, PPInteractionFromMHJ ) {
             Gpp( pp_t( 2, 7, -1, -1, 2 ), pp_t( 4, 5, -1, -1, 2 ) ) );
     EXPECT_FLOAT_EQ( -0.0447950562,
             Gpp( pp_t( 3, 4, -1, -1, 2 ), pp_t( 3, 4, -1, -1, 2 ) ) );
+    EXPECT_FLOAT_EQ(  0.1354613,
+            Gpp( pp_t( 3, 4, -1, -1, 2 ), pp_t( 6, 8, -1, -1, 2 ) ) );
 
     // Some 2- tests
     EXPECT_FLOAT_EQ(  0.0111985897,
             Gpp( pp_t( 0, 8, -1, -1, 2 ), pp_t( 1, 3, -1, -1, 2 ) ) );
     EXPECT_FLOAT_EQ( -0.0146918729,
             Gpp( pp_t( 2, 3, -1, -1, 2 ), pp_t( 4, 7, -1, -1, 2 ) ) );
+
+    // 0+
+    EXPECT_FLOAT_EQ(  0.9258414338,
+            Gpp( pp_t( 9, 2, -1, -1, 0 ), pp_t( 5, 0, -1, -1, 0 ) ) );
+
 
 // This test includes normal hits plus phase changes.
     // This is a test case where J = 0, so there can be no phase difference.
@@ -112,16 +136,4 @@ TEST( InteractionFactories, PPInteractionFromMHJ ) {
     // one factor
     EXPECT_FLOAT_EQ( std::sqrt(2.0) * -0.733220442,
             Gpp( pp_t( 6, 6, -1, -1, 6 ), pp_t( 6, 8, -1, -1, 6 ) ) );
-}
-
-TEST( InteractionFactories, PHFromPP ) {
-    SingleParticleModelspace spms =
-        read_sp_modelspace_from_file( "tests/data/ipm_modelspace.dat" );
-    PPInteraction Gpp = build_gmatrix_from_mhj_file(
-            "tests/data/test_interaction.mhj", spms );
-    PHInteraction Gph = build_ph_interaction_from_pp( Gpp, spms );
-
-    typedef ParticleHoleState ph_t;
-    EXPECT_FLOAT_EQ(  4.0043716357,
-            Gph( ph_t( 0, 10, -1, -1, 1 ), ph_t( 1, 11, -1, -1, 1 ) ) );
 }

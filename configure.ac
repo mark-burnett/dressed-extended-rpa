@@ -50,7 +50,7 @@ AC_SUBST( BOOST_NUMERIC_BINDINGS_CFLAGS )
 
 # Lapack library
 LAPACK_CFLAGS=""
-LAPACK_LIBS="-llapack_atlas -lgfortran"
+LAPACK_LIBS="-llapack -lgfortran"
 
 AC_SUBST( LAPACK_CFLAGS )
 AC_SUBST( LAPACK_LIBS )
@@ -62,7 +62,7 @@ BOOST_PROGRAM_OPTIONS_LIBS="-lboost_program_options"
 AC_SUBST(BOOST_PROGRAM_OPTIONS_CFLAGS)
 AC_SUBST(BOOST_PROGRAM_OPTIONS_LIBS)
 
-CXXFLAGS="$CXXFLAGS -W -Wall -Werror" #-pg -DNDEBUG"
+CXXFLAGS="$CXXFLAGS -W -Wall" # -Werror" #-pg -DNDEBUG"
 AC_SUBST(CXXFLAGS)
 
 # ---------------------------------------------------------------------

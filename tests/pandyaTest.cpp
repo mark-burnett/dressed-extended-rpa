@@ -4,7 +4,7 @@
 #include "Modelspace.h"
 #include "Interaction.h"
 #include "modelspace_factories.h"
-#include "interaction_factories.h"
+#include "pp_interaction_factories.h"
 
 /* Single particle modelspace map for test interaction file
  * mhj file index - 1 -> my modelspace index
@@ -54,4 +54,8 @@ TEST( Pandya, Pandya ) {
             ph_t( 6, 1, -1, -1, 2 ), ph_t( 1, 6, -1, -1, 2 ) ) );
     EXPECT_FLOAT_EQ(  1.4165830802, pandya( Gpp, spms,
             ph_t( 9, 1, -1, -1, 2 ), ph_t( 17, 12, -1, -1, 2 ) ) );
+
+    // Failed when transitioning code to new vector based approach
+    EXPECT_FLOAT_EQ( -0.90361798, pandya( Gpp, spms,
+             ph_t( 7, 4, -1, -1, 0 ), ph_t( 3, 8, -1, -1, 0 ) ) );
 }

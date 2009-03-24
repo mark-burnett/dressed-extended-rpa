@@ -1,3 +1,5 @@
+#include <iostream>
+#include <boost/numeric/conversion/cast.hpp>
 #include "Modelspace.h"
 
 // --------------------------------------------------------------------
@@ -37,6 +39,12 @@ int get_max_ph_J( const SingleParticleModelspace &spms, int tz, int parity ) {
     return J;
 }
 
+void print_sp_state( std::ostream &o, int i,
+                     const SingleParticleModelspace &spms ) {
+    o << "(" << spms.j[i] << " " << spms.parity[i] << " " << spms.n[i]
+        << " " << spms.tz[i] << ")";
+}
+
 // --------------------------------------------------------------------
 // PP Modelspace helpers
 // --------------------------------------------------------------------
@@ -45,3 +53,27 @@ int get_max_ph_J( const SingleParticleModelspace &spms, int tz, int parity ) {
 // PH Modelspace helpers
 // --------------------------------------------------------------------
 
+void print_ph_modelspace_sizes( std::ostream &o,
+                                const ParticleHoleModelspace &phms ) {
+    o << " tz  J^parity  size " << std::endl;
+    for ( int tz = -1; tz <= 1; ++tz ) {
+        for ( int parity = -1; parity <= 1; parity += 2 ) {
+            for ( int J = 0; J <
+                    boost::numeric_cast<int>(phms[tz+1][(parity+1)/2].size());
+                        ++J) { 
+                o << tz << " " << J;
+                if ( parity > 0 )
+                    o << "+ ";
+                else
+                    o << "- ";
+                o << phms[tz+1][(parity+1)/2][J].size() << std::endl; } } } }
+
+void print_ph_state( std::ostream &o,
+                     const ParticleHoleState        &ph,
+                     const SingleParticleModelspace &spms ) {
+    o << "(";
+    print_sp_state( o, ph.ip, spms );
+    o << " ";
+    print_sp_state( o, ph.ih, spms );
+    o << " " << ph.J << ")";
+}

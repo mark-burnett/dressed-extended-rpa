@@ -3,6 +3,7 @@
  * Mark Burnett November, 2008
  */
 
+#include <cassert>
 #include <cmath>
 
 #include "Modelspace.h"
@@ -20,12 +21,18 @@ double pandya( const PPInteraction &G_pp,
     int ib = A.ih;
     int ic = B.ip;
     int id = B.ih;
-    int J = A.J;
+
+    assert( A.J == B.J );
+    assert( spms.parity[A.ip] * spms.parity[A.ih] ==
+            spms.parity[B.ip] * spms.parity[B.ih] );
+    assert( spms.tz[A.ip] - spms.tz[A.ih] ==
+            spms.tz[B.ip] - spms.tz[B.ih] );
 
     int Jmin = std::max( std::abs( spms.j[ia] - spms.j[id] ),
-                                  std::abs( spms.j[ib] - spms.j[ic] ) );
+                         std::abs( spms.j[ib] - spms.j[ic] ) );
     int Jmax = std::min( spms.j[ia] + spms.j[id],
-                                  spms.j[ic] + spms.j[ib] );
+                         spms.j[ic] + spms.j[ib] );
+
     double elem = 0.0;
     for ( int Jp = Jmin; Jp <= Jmax; ++Jp ) {
         ParticleParticleState pp_A( ia, id, -1, -1, Jp );
@@ -33,7 +40,7 @@ double pandya( const PPInteraction &G_pp,
 
         double phase = std::pow(-1.0, spms.j[ib] + spms.j[ic] + Jp);
         double temp = phase * (2*Jp + 1) * G_pp(pp_A, pp_B) *
-            wigner6j( spms.j[ia], spms.j[ib], J,
+            wigner6j( spms.j[ia], spms.j[ib], A.J,
                       spms.j[ic], spms.j[id], Jp );
         elem += temp;
     }
