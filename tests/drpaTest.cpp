@@ -48,13 +48,6 @@ TEST( DRPA, FunctionalTest ) {
                         real_vals.begin(), real );
 
         std::sort( real_vals.begin(), real_vals.end() );
-        /*
-        BOOST_FOREACH( const ParticleHoleState &ph,
-                phms[tz+1][(parity+1)/2][J] ) {
-            print_ph_state( std::cout, ph, spms );
-            std::cout << std::endl;
-        }
-        */
 
         EXPECT_FLOAT_EQ( 16.819696, real_vals[ vals.size() / 2 ] ) << "0-";
     }
@@ -64,8 +57,6 @@ TEST( DRPA, FunctionalTest ) {
         int tz     =  0;
         int parity =  1;
         int J      =  0;
-//        std::cout << util::cmatrix_t(build_static_matrix( terms,
-//                      phms[tz+1][(parity+1)/2][J] ) ) << std::endl;
         util::cvector_t vals = util::eigenvalues(
               util::cmatrix_t(build_static_matrix( terms,
                       phms[tz+1][(parity+1)/2][J] ) ) );
@@ -75,16 +66,6 @@ TEST( DRPA, FunctionalTest ) {
                         real_vals.begin(), real );
 
         std::sort( real_vals.begin(), real_vals.end() );
-        /*
-        BOOST_FOREACH( double v, real_vals ) {
-            std::cout << v << std::endl;
-        }
-        BOOST_FOREACH( const ParticleHoleState &ph,
-                phms[tz+1][(parity+1)/2][J] ) {
-            print_ph_state( std::cout, ph, spms );
-            std::cout << std::endl;
-        }
-        */
 
         EXPECT_FLOAT_EQ( 27.696529, real_vals[ vals.size() / 2 ] ) << "0+";
     }
@@ -145,8 +126,6 @@ TEST( DRPA, FunctionalTest ) {
         int tz     =  0;
         int parity =  1;
         int J      =  2;
-//        std::cout << util::cmatrix_t(build_static_matrix( terms,
-//                      phms[tz+1][(parity+1)/2][J] ) ) << std::endl;
         util::cvector_t vals = util::eigenvalues(
               util::cmatrix_t(build_static_matrix( terms,
                       phms[tz+1][(parity+1)/2][J] ) ) );
@@ -155,17 +134,43 @@ TEST( DRPA, FunctionalTest ) {
         std::transform( vals.begin(), vals.end(),
                         real_vals.begin(), real );
 
-        /*
-        BOOST_FOREACH( const ParticleHoleState &ph,
-                phms[tz+1][(parity+1)/2][J] ) {
-            print_ph_state( std::cout, ph, spms );
-            std::cout << std::endl;
-        }
-        */
-
         std::sort( real_vals.begin(), real_vals.end() );
 
         EXPECT_FLOAT_EQ( 1.5833673, real_vals[ vals.size() / 2 ] ) << "2+";
         EXPECT_FLOAT_EQ( 4.9466329, real_vals[ vals.size() / 2 + 1 ] ) << "2+";
+    }
+    // 3-
+    {
+        int tz     =  0;
+        int parity = -1;
+        int J      =  3;
+        util::cvector_t vals = util::eigenvalues(
+              util::cmatrix_t(build_static_matrix( terms,
+                      phms[tz+1][(parity+1)/2][J] ) ) );
+        std::vector< double > real_vals( vals.size() );
+        real_vals.resize( vals.size() );
+        std::transform( vals.begin(), vals.end(),
+                        real_vals.begin(), real );
+
+        std::sort( real_vals.begin(), real_vals.end() );
+
+        EXPECT_FLOAT_EQ( 11.084711, real_vals[ vals.size() / 2 ] ) << "3-";
+    }
+    // 3+
+    {
+        int tz     =  0;
+        int parity =  1;
+        int J      =  3;
+        util::cvector_t vals = util::eigenvalues(
+              util::cmatrix_t(build_static_matrix( terms,
+                      phms[tz+1][(parity+1)/2][J] ) ) );
+        std::vector< double > real_vals( vals.size() );
+        real_vals.resize( vals.size() );
+        std::transform( vals.begin(), vals.end(),
+                        real_vals.begin(), real );
+
+        std::sort( real_vals.begin(), real_vals.end() );
+
+        EXPECT_FLOAT_EQ( 2.098350, real_vals[ vals.size() / 2 ] ) << "3+";
     }
 }

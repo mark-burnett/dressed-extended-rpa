@@ -30,8 +30,12 @@ ladder( const std::vector< ParticleHoleState > &vec, double E,
 
     for ( int i = 0; i < size; ++i ) {
         ParticleHoleState ph1 = vec[i];
+        double Sa = spms.pfrag[ph1.ip][ph1.ipf].S
+                  * spms.hfrag[ph1.ih][ph1.ihf].S;
         for ( int k = i; k < size; ++k ) {
             ParticleHoleState ph2 = vec[k];
+            double S = Sa * spms.pfrag[ph2.ip][ph2.ipf].S
+                          * spms.hfrag[ph2.ih][ph2.ihf].S;
             // Phase for A* and B*
             int phase = std::pow( -1.0, spms.j[ ph1.ip ] + spms.j[ ph1.ih ]
                                       + spms.j[ ph2.ip ] + spms.j[ ph2.ih ] );
@@ -39,31 +43,27 @@ ladder( const std::vector< ParticleHoleState > &vec, double E,
             //   (A is normally Hermitian)
             switch ( pos ) {
                 case ENUM_A:
-                    m( k, i ) = m( i, k ) =
-                       internal::ladder_A_term( ph1, ph2, E, Gpp,
+                    m( k, i ) = m( i, k ) = S
+                     * internal::ladder_A_term( ph1, ph2, E, Gpp,
                                ppms, hhms, spms );
                     break;
                 case ENUM_A_STAR:
-                    m( k, i ) = m( i, k ) = phase
+                    m( k, i ) = m( i, k ) = phase * S
                      * internal::ladder_A_term( ph1, ph2, -E, Gpp,
                                ppms, hhms, spms );
                     break;
                 case ENUM_B:
-                    m( k, i ) = m( i, k ) =
-                       internal::ladder_B_term( ph1, ph2, Gpp,
+                    m( k, i ) = m( i, k ) = S
+                     * internal::ladder_B_term( ph1, ph2, Gpp,
                                ppms, hhms, spms );
                     break;
                 case ENUM_B_STAR:
-                    m( k, i ) = m( i, k ) = phase
+                    m( k, i ) = m( i, k ) = phase * S
                      * internal::ladder_B_term( ph1, ph2, Gpp,
                                ppms, hhms, spms );
                     break;
                 default:
-                    throw invalid_matrix_position();
-            }
-        }
-    }
-
+                    throw invalid_matrix_position(); } } }
     return m;
 }
 
@@ -110,14 +110,18 @@ double ladder_A_term( const ParticleHoleState &ph1,
         double JpTerm = 0;
         // Intermediate terms above Fermi surface
         BOOST_FOREACH(pp_t i_pp, ppms[1 + tz][(parity+1)/2][Jp]) {
-            JpTerm += Gpp( left, i_pp ) * Gpp( i_pp, right ) /
+            double Si_pp = spms.pfrag[i_pp.ip1][i_pp.ip1f].S
+                         * spms.pfrag[i_pp.ip2][i_pp.ip2f].S;
+            JpTerm += Si_pp * Gpp( left, i_pp ) * Gpp( i_pp, right ) /
                 ( E - ( - spms.hfrag[ib][ibf].E - spms.hfrag[id][idf].E
                         + spms.pfrag[i_pp.ip1][i_pp.ip1f].E
                         + spms.pfrag[i_pp.ip2][i_pp.ip2f].E ) );
         }
         // Intermediate terms below Fermi surface
         BOOST_FOREACH(pp_t i_hh, hhms[1 + tz][(parity+1)/2][Jp]) {
-            JpTerm += Gpp( left, i_hh ) * Gpp( i_hh, right ) /
+            double Si_hh = spms.hfrag[i_hh.ip1][i_hh.ip1f].S
+                         * spms.hfrag[i_hh.ip2][i_hh.ip2f].S;
+            JpTerm += Si_hh * Gpp( left, i_hh ) * Gpp( i_hh, right ) /
                 ( E - ( spms.pfrag[ia][iaf].E + spms.pfrag[ic][icf].E
                         - spms.hfrag[i_hh.ip1][i_hh.ip1f].E
                         - spms.hfrag[i_hh.ip2][i_hh.ip2f].E ) );
@@ -170,14 +174,18 @@ double ladder_B_term( const ParticleHoleState &ph1,
         double JpTerm = 0;
         // Intermediate terms above Fermi surface
         BOOST_FOREACH(pp_t i_pp, ppms[1 + tz][(parity+1)/2][Jp]) {
-            JpTerm += Gpp( left, i_pp ) * Gpp( i_pp, right ) /
+            double Si_pp = spms.pfrag[i_pp.ip1][i_pp.ip1f].S
+                         * spms.pfrag[i_pp.ip2][i_pp.ip2f].S;
+            JpTerm += Si_pp * Gpp( left, i_pp ) * Gpp( i_pp, right ) /
                 - ( - spms.hfrag[ib][ibf].E - spms.hfrag[ic][icf].E
                     + spms.pfrag[i_pp.ip1][i_pp.ip1f].E
                     + spms.pfrag[i_pp.ip2][i_pp.ip2f].E );
         }
         // Intermediate terms below Fermi surface
         BOOST_FOREACH(pp_t i_hh, hhms[1 + tz][(parity+1)/2][Jp]) {
-            JpTerm += Gpp( left, i_hh ) * Gpp( i_hh, right ) /
+            double Si_hh = spms.hfrag[i_hh.ip1][i_hh.ip1f].S
+                         * spms.hfrag[i_hh.ip2][i_hh.ip2f].S;
+            JpTerm += Si_hh * Gpp( left, i_hh ) * Gpp( i_hh, right ) /
                 - (   spms.pfrag[ia][iaf].E + spms.pfrag[id][idf].E
                     - spms.hfrag[i_hh.ip1][i_hh.ip1f].E
                     - spms.hfrag[i_hh.ip2][i_hh.ip2f].E );

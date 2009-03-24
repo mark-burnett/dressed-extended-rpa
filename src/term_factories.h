@@ -16,14 +16,14 @@ std::vector< Term > build_static_erpa_terms(
                                     const ParticleParticleModelspace &hhms,
                                     const SingleParticleModelspace   &spms );
 
-std::vector< Term > build_dynamic_erpa_terms(
+std::vector< Term > build_dynamic_derpa_terms(
                                     const PHInteraction &Gph,
                                     const PPInteraction &Gpp,
                                     const ParticleHoleModelspace     &phms,
                                     const ParticleParticleModelspace &ppms,
                                     const ParticleParticleModelspace &hhms,
-                                    const PPFromSPModelspace         &ppspms,
-                                    const PPFromSPModelspace         &hhspms,
+//                                    const PPFromSPModelspace         &ppspms,
+//                                    const PPFromSPModelspace         &hhspms,
                                     const SingleParticleModelspace   &spms );
 
 #endif // _TERM_FACTORIES_H_

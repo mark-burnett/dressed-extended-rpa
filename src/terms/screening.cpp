@@ -29,8 +29,13 @@ screening( const std::vector< ParticleHoleState > &vec, double E,
 
     for ( int i = 0; i < size; ++i ) {
         ParticleHoleState ph1 = vec[i];
+        double Sa = spms.pfrag[ph1.ip][ph1.ipf].S
+                  * spms.hfrag[ph1.ih][ph1.ihf].S;
         for ( int k = i; k < size; ++k ) {
             ParticleHoleState ph2 = vec[k];
+            double S = Sa * spms.pfrag[ph2.ip][ph2.ipf].S
+                          * spms.hfrag[ph2.ih][ph2.ihf].S;
+
             // Phase for A* and B*
             int phase = std::pow( -1.0, spms.j[ ph1.ip ] + spms.j[ ph1.ih ]
                                       + spms.j[ ph2.ip ] + spms.j[ ph2.ih ] );
@@ -38,29 +43,25 @@ screening( const std::vector< ParticleHoleState > &vec, double E,
             //   (A is normally Hermitian)
             switch ( pos ) {
                 case ENUM_A:
-                    m( k, i ) = m( i, k ) =
-                        internal::screening_A_term( ph1, ph2, E,
+                    m( k, i ) = m( i, k ) = S
+                      * internal::screening_A_term( ph1, ph2, E,
                                 Gph, phms, spms );
                     break;
                 case ENUM_A_STAR:
-                    m( k, i ) = m( i, k ) = phase
+                    m( k, i ) = m( i, k ) = phase * S
                       * internal::screening_A_term( ph1, ph2, -E,
                                 Gph, phms, spms );
                     break;
                 case ENUM_B:
-                    m( k, i ) = m( i, k ) =
-                        internal::screening_B_term( ph1, ph2, Gph, phms, spms );
+                    m( k, i ) = m( i, k ) = S
+                      * internal::screening_B_term( ph1, ph2, Gph, phms, spms );
                     break;
                 case ENUM_B_STAR:
-                    m( k, i ) = m( i, k ) = phase
+                    m( k, i ) = m( i, k ) = phase * S
                       * internal::screening_B_term( ph1, ph2, Gph, phms, spms );
                     break;
                 default:
-                    throw invalid_matrix_position();
-            }
-        }
-    }
-
+                    throw invalid_matrix_position(); } } }
     return m;
 }
 
@@ -107,15 +108,21 @@ double screening_A_term( const ParticleHoleState &ph1,
         double JpTerm = 0;
         // Forward going terms
         BOOST_FOREACH(ph_t i_ph, phms[1 + tz][(parity+1)/2][Jp]) {
-            JpTerm += Gph( left, i_ph ) * Gph( i_ph, right ) /
+            double Si_ph = spms.pfrag[i_ph.ip][i_ph.ipf].S
+                         * spms.hfrag[i_ph.ih][i_ph.ihf].S;
+            JpTerm += Si_ph *
+                Gph( left, i_ph ) * Gph( i_ph, right ) /
                 ( E - ( spms.pfrag[ic][icf].E - spms.hfrag[ib][ibf].E
                         + spms.pfrag[ i_ph.ip ][ i_ph.ipf ].E
                         - spms.pfrag[ i_ph.ih ][ i_ph.ihf ].E ) );
         }
         // Backward going terms
         BOOST_FOREACH(ph_t i_ph, phms[1 - tz][(parity+1)/2][Jp] ) {
+            double Si_ph = spms.pfrag[i_ph.ip][i_ph.ipf].S
+                         * spms.hfrag[i_ph.ih][i_ph.ihf].S;
             ph_t r_ph( i_ph.ih, i_ph.ip, -1, -1, Jp );
-            JpTerm += Gph( left, r_ph ) * Gph( r_ph, right ) /
+            JpTerm += Si_ph *
+                Gph( left, r_ph ) * Gph( r_ph, right ) /
                 ( E - ( spms.pfrag[ia][iaf].E - spms.hfrag[id][idf].E
                         + spms.pfrag[ i_ph.ip ][ i_ph.ipf ].E
                         - spms.pfrag[ i_ph.ih ][ i_ph.ihf ].E ) );
@@ -168,16 +175,22 @@ double screening_B_term( const ParticleHoleState &ph1,
         ph_t right( ib, id, -1, -1, Jp );
         double JpTerm = 0;
         BOOST_FOREACH(ph_t i_ph, phms[1 + tz][(parity+1)/2][Jp]) {
+            double Si_ph = spms.pfrag[i_ph.ip][i_ph.ipf].S
+                         * spms.hfrag[i_ph.ih][i_ph.ihf].S;
             // Forward going terms
-            JpTerm += Gph( left, i_ph ) * Gph( i_ph, right ) /
+            JpTerm += Si_ph *
+                Gph( left, i_ph ) * Gph( i_ph, right ) /
                 - ( spms.pfrag[id][idf].E - spms.hfrag[ib][ibf].E
                     + spms.pfrag[ i_ph.ip ][ i_ph.ipf ].E
                     - spms.pfrag[ i_ph.ih ][ i_ph.ihf ].E );
         }
         BOOST_FOREACH(ph_t i_ph, phms[1 - tz][(parity+1)/2][Jp] ) {
+            double Si_ph = spms.pfrag[i_ph.ip][i_ph.ipf].S
+                         * spms.hfrag[i_ph.ih][i_ph.ihf].S;
             // Backward going terms
             ph_t r_ph( i_ph.ih, i_ph.ip, -1, -1, Jp );
-            JpTerm += Gph( left, r_ph ) * Gph( r_ph, right ) /
+            JpTerm += Si_ph *
+                Gph( left, r_ph ) * Gph( r_ph, right ) /
                 - ( spms.pfrag[ia][iaf].E - spms.hfrag[ic][icf].E
                     + spms.pfrag[ i_ph.ip ][ i_ph.ipf ].E
                     - spms.pfrag[ i_ph.ih ][ i_ph.ihf ].E );

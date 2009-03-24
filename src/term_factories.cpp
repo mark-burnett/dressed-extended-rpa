@@ -38,20 +38,21 @@ std::vector< Term > build_static_erpa_terms(
     return tvec;
 }
 
-std::vector< Term > build_dynamic_erpa_terms(
+std::vector< Term > build_dynamic_derpa_terms(
                                     const PHInteraction &Gph,
                                     const PPInteraction &Gpp,
                                     const ParticleHoleModelspace     &phms,
                                     const ParticleParticleModelspace &ppms,
                                     const ParticleParticleModelspace &hhms,
-                                    const PPFromSPModelspace         &ppspms,
-                                    const PPFromSPModelspace         &hhspms,
+//                                    const PPFromSPModelspace         &ppspms,
+//                                    const PPFromSPModelspace         &hhspms,
                                     const SingleParticleModelspace   &spms ) {
     std::vector< Term > tvec;
 
     tvec.push_back( terms::make_screening( Gph, phms, spms ) );
     tvec.push_back( terms::make_ladder( Gpp, ppms, hhms, spms ) );
-    tvec.push_back( terms::make_self_energy( Gpp, ppms, hhms,
-                                             ppspms, hhspms, spms ) );
+// NOTE: no self energy is used for DERPA -- it's already in the "dressing"
+//    tvec.push_back( terms::make_self_energy( Gpp, ppms, hhms,
+//                                             ppspms, hhspms, spms ) );
     return tvec;
 }

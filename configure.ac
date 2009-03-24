@@ -62,7 +62,7 @@ BOOST_PROGRAM_OPTIONS_LIBS="-lboost_program_options"
 AC_SUBST(BOOST_PROGRAM_OPTIONS_CFLAGS)
 AC_SUBST(BOOST_PROGRAM_OPTIONS_LIBS)
 
-CXXFLAGS="$CXXFLAGS -W -Wall" # -Werror" #-pg -DNDEBUG"
+CXXFLAGS="$CXXFLAGS -W -Wall -Werror" #-pg -DNDEBUG"
 AC_SUBST(CXXFLAGS)
 
 # ---------------------------------------------------------------------

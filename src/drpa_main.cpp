@@ -15,6 +15,7 @@
 #include "Interaction.h"
 #include "MatrixFactory.h"
 
+#include "linalg.h"
 #include "modelspace_factories.h"
 #include "ph_interaction_factories.h"
 #include "pp_interaction_factories.h"
@@ -36,12 +37,10 @@ int main( int argc, char *argv[] ) {
     // Make sure we got the options we wanted
     if ( cmdline_vm.count("help") ) {
         std::cout << cmdline_desc << std::endl;
-        return 1;
-    }
+        return 0; }
     if ( !cmdline_vm.count("config") ) {
         std::cerr << "Configuration file not specified.\n";
-        return 1;
-    }
+        return 1; }
 
     std::cout << "Reading configuration from '"
         << cmdline_vm["config"].as<std::string>() << "'." << std::endl;
@@ -53,26 +52,21 @@ int main( int argc, char *argv[] ) {
         ("modelspace_file",  po::value<std::string>(), "Modelspace filename.")
         ("output_file",      po::value<std::string>(), "Full output filename.");
     po::variables_map config_vm;
-    {
-        std::ifstream cfile(cmdline_vm["config"].as<std::string>().c_str());
+    {   std::ifstream cfile(cmdline_vm["config"].as<std::string>().c_str());
         po::store( po::parse_config_file( cfile,
-                    config_desc ), config_vm );
-    }
+                    config_desc ), config_vm ); }
     po::notify( config_vm );
 
     // Make sure we got the options we needed
     if ( !config_vm.count("interaction_file") ) {
         std::cerr << "Interaction file not specified in config file.\n";
-        return 1;
-    }
+        return 1; }
     if ( !config_vm.count("modelspace_file") ) {
         std::cerr << "Modelspace file not specified in config file.\n";
-        return 1;
-    }
+        return 1; }
     if ( !config_vm.count("output_file") ) {
         std::cerr << "Output file not specified in config file.\n";
-        return 1;
-    }
+        return 1; }
 
     // Instantiate the object graph for the calculation.
     // Modelspaces
@@ -88,7 +82,7 @@ int main( int argc, char *argv[] ) {
     PPFromSPModelspace         hhspms = build_hhsp_modelspace_from_sp( spms );
     */
     std::cout << "Modelspaces built.  PH modelspace sizes:" << std::endl;
-    print_ph_modelspace_sizes( std::cout, phms );
+    print_ph_modelspace_sizes( std::cout, 0, phms );
 
     // Particle-hole interaction
     std::cout << "Building interaction objects." << std::endl;
@@ -98,36 +92,23 @@ int main( int argc, char *argv[] ) {
     std::cout << "Finished building interactions." << std::endl;
 
     // Build terms
+    std::vector< Term > rpa_terms = build_rpa_terms( Gph, spms );
+    int tz     =  0;
+    int parity = -1;
+    int J      =  1;
     // loop/build matricies
+    std::cout << "Constructing RPA Matrix for tz = " << tz
+        << ", J = " << J << ", parity = " << parity << std::endl;
+    util::cmatrix_t rpa_matrix( build_static_matrix( rpa_terms,
+                phms[tz + 1][(parity+1)/2][J] ) );
+    std::cout << "Performing eigenvalue calculation." << std::endl;
 
-    /*
-    // Actual calculation
-    std::cout << "Building RPA calculation object." << std::endl;
-    rpa::Calculation myRPA = rpa::factories::build_standard_rpa(
-            Gph, ms, sp_energies );
-    std::cout << "RPA calculation object built." << std::endl;
+    util::cvector_t vals = util::eigenvalues( rpa_matrix );
+    std::cout << "Calculation complete." << std::endl;
 
-    // Perform the calculation
-    typedef std::pair< Jpi_t, boost::tuple< util::vector_t,
-                                            util::matrix_t > > result_t;
-    std::list< result_t > results = myRPA.execute( 0 );
-
-    // Write output
-    std::cout << "Calculation complete.  Writing results." << std::endl;
-    {
-        std::ofstream outfile(
-                config_vm["output_file"].as<std::string>().c_str() );
-
-        BOOST_FOREACH( const result_t &result, results ) {
-            const Jpi_t &Jpi = result.first;
-            const boost::tuple< util::vector_t, util::matrix_t > &r =
-                result.second;
-            outfile << "(" << Jpi.first << ", " << Jpi.second << ")\n"
-                    << r.get<0>() << "\n"
-                    << r.get<1>() << "\n\n";
-        }
-    }
-    */
+    std::ofstream outfile(
+            config_vm["output_file"].as<std::string>().c_str() );
+    outfile << vals << std::endl;
 
     return 0;
 }

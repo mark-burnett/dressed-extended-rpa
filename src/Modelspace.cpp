@@ -68,6 +68,20 @@ void print_ph_modelspace_sizes( std::ostream &o,
                     o << "- ";
                 o << phms[tz+1][(parity+1)/2][J].size() << std::endl; } } } }
 
+void print_ph_modelspace_sizes( std::ostream &o, int tz,
+                                const ParticleHoleModelspace &phms ) {
+    o << " tz  J^parity  size " << std::endl;
+    for ( int parity = -1; parity <= 1; parity += 2 ) {
+        for ( int J = 0; J <
+                boost::numeric_cast<int>(phms[tz+1][(parity+1)/2].size());
+                    ++J) { 
+            o << tz << " " << J;
+            if ( parity > 0 )
+                o << "+ ";
+            else
+                o << "- ";
+            o << phms[tz+1][(parity+1)/2][J].size() << std::endl; } } }
+
 void print_ph_state( std::ostream &o,
                      const ParticleHoleState        &ph,
                      const SingleParticleModelspace &spms ) {

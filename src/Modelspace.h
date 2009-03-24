@@ -120,6 +120,9 @@ int get_max_ph_J( const SingleParticleModelspace &spms, int tz, int parity );
 void print_ph_modelspace_sizes( std::ostream &o,
                                 const ParticleHoleModelspace &phms );
 
+void print_ph_modelspace_sizes( std::ostream &o, int tz,
+                                const ParticleHoleModelspace &phms );
+
 void print_sp_state( std::ostream &o, int i,
                      const SingleParticleModelspace &spms );
 void print_ph_state( std::ostream &o,
