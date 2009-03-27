@@ -99,7 +99,7 @@ int main( int argc, char *argv[] ) {
     // loop/build matricies
     std::cout << "Constructing RPA Matrix for tz = " << tz
         << ", J = " << J << ", parity = " << parity << std::endl;
-    util::cmatrix_t rpa_matrix( build_static_matrix( rpa_terms,
+    util::matrix_t rpa_matrix( build_static_matrix( rpa_terms,
                 phms[tz + 1][(parity+1)/2][J] ) );
     std::cout << "Performing eigenvalue calculation." << std::endl;
 

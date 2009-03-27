@@ -6,11 +6,14 @@ INCLUDES = $(PROJECT_INCLUDES) $(BOOST_NUMERIC_BINDINGS_CFLAGS)
 noinst_LTLIBRARIES     = src/liberpa.la
 src_liberpa_la_SOURCES = src/angular_momentum.cpp src/io.cpp src/pandya.cpp\
 						 src/linalg.cpp\
+						 src/find_root.cpp\
 						 src/Modelspace.cpp\
 						 src/modelspace_factories.cpp\
 						 src/pp_interaction_factories.cpp\
 						 src/ph_interaction_factories.cpp\
 						 src/MatrixFactory.cpp\
+						 src/intervals.cpp\
+						 src/search.cpp\
 						 src/terms/non_interacting.cpp\
 						 src/terms/first_order.cpp\
 						 src/terms/screening.cpp\
@@ -28,11 +31,16 @@ bin_drpa_LDADD   = src/liberpa.la
 check_PROGRAMS   = bin/test
 bin_test_SOURCES = tests/test_main.cpp\
 				   tests/angular_momentumTest.cpp\
+				   tests/find_rootTest.cpp\
 				   tests/modelspace_factoriesTest.cpp\
+				   tests/ModelspaceTest.cpp\
 				   tests/pp_interaction_factoriesTest.cpp\
 				   tests/ph_interaction_factoriesTest.cpp\
 				   tests/pandyaTest.cpp\
-				   tests/drpaTest.cpp
+				   tests/drpaTest.cpp\
+				   tests/determinantTest.cpp\
+				   tests/intervalsTest.cpp\
+				   tests/searchTest.cpp
 bin_test_LDADD   = src/liberpa.la
 LIBS             = $(GTEST_LIBS) $(BOOST_PROGRAM_OPTIONS_LIBS) $(LAPACK_LIBS)
 

@@ -30,8 +30,13 @@ typedef ublas::matrix< complex_t, ublas::column_major > cmatrix_t;
 //std::pair< vector_t, matrix_t > eig( const matrix_t &mat );
 
 // complex versions
+cvector_t eigenvalues( const matrix_t &mat );
+std::pair< cvector_t, matrix_t > eig( const matrix_t &mat );
 cvector_t eigenvalues( const cmatrix_t &mat );
 std::pair< cvector_t, cmatrix_t > eig( const cmatrix_t &mat );
+
+std::vector< double >
+sorted_eigenvalues( const matrix_t &m );
 
 } // end namespace util
 

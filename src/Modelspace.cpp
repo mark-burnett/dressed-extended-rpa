@@ -15,11 +15,8 @@ int get_max_pp_J( const SingleParticleModelspace &spms, int tz, int parity ) {
                 continue;
             int nJ = spms.j[a] + spms.j[b];
             if ( nJ > J )
-                J = nJ;
-        }
-    }
-    return J;
-}
+                J = nJ; } }
+    return J; }
 
 int get_max_ph_J( const SingleParticleModelspace &spms, int tz, int parity ) {
     int J = -1;
@@ -36,14 +33,12 @@ int get_max_ph_J( const SingleParticleModelspace &spms, int tz, int parity ) {
             int nJ = spms.j[p] + spms.j[h];
             if ( nJ > J )
                 J = nJ; } }
-    return J;
-}
+    return J; }
 
 void print_sp_state( std::ostream &o, int i,
                      const SingleParticleModelspace &spms ) {
     o << "(" << spms.j[i] << " " << spms.parity[i] << " " << spms.n[i]
-        << " " << spms.tz[i] << ")";
-}
+        << " " << spms.tz[i] << ")"; }
 
 // --------------------------------------------------------------------
 // PP Modelspace helpers
@@ -52,6 +47,25 @@ void print_sp_state( std::ostream &o, int i,
 // --------------------------------------------------------------------
 // PH Modelspace helpers
 // --------------------------------------------------------------------
+// Returns the energy of a particle hole state (fragment)
+double ph_energy( const ParticleHoleState &ph,
+                  const SingleParticleModelspace &spms ) {
+    return spms.pfrag[ph.ip][ph.ipf].E - spms.hfrag[ph.ih][ph.ihf].E; }
+
+// Returns the (sorted) poles of a particle hole modelspace
+std::vector< double > ph_poles( int tz, int parity, int J,
+                                const ParticleHoleModelspace &phms,
+                                const SingleParticleModelspace &spms ) {
+    const std::vector< ParticleHoleState > &ph_states
+        = phms[tz+1][(parity+1)/2][J];
+
+    std::vector< double > poles;
+    for ( int i = 0; i < ph_states.size(); ++i ) {
+        poles.push_back( ph_energy( ph_states[i], spms ) ); }
+
+    std::sort( poles.begin(), poles.end() );
+
+    return poles; }
 
 void print_ph_modelspace_sizes( std::ostream &o,
                                 const ParticleHoleModelspace &phms ) {

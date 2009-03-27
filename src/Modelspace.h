@@ -112,9 +112,16 @@ typedef std::vector< std::vector<
     std::vector< ParticleParticleState >
 > > PPFromSPModelspace;
 
-// Functions in Modelspace.cpp
+// Some SP Modelspace functions
 int get_max_pp_J( const SingleParticleModelspace &spms, int tz, int parity );
 int get_max_ph_J( const SingleParticleModelspace &spms, int tz, int parity );
+
+// Some PH Modelspace functions
+double ph_energy( const ParticleHoleState &ph,
+                  const SingleParticleModelspace &spms );
+std::vector< double > ph_poles( int tz, int parity, int J,
+                                const ParticleHoleModelspace &phms,
+                                const SingleParticleModelspace &spms );
 
 // IO Functions
 void print_ph_modelspace_sizes( std::ostream &o,
