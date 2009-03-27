@@ -45,11 +45,11 @@ TEST( ModelspaceFactories, UnfragmentedPHModelspace ) {
             read_sp_modelspace_from_file(
                 "tests/data/ipm_modelspace.dat" ) );
     // 0+ (tz = 0)
-    EXPECT_EQ(  4, phms[ 0 + 1 ][ 1 ] [ 0 ].size() );
+    EXPECT_EQ(  4, phms[ 0 + 1 ][ 1 ][ 0 ].size() );
     // 1- (tz = 0)
-    EXPECT_EQ( 19, phms[ 0 + 1 ][ 0 ] [ 1 ].size() );
+    EXPECT_EQ( 19, phms[ 0 + 1 ][ 0 ][ 1 ].size() );
     // 2+ (tz = 0)
-    EXPECT_EQ( 13, phms[ 0 + 1 ][ 1 ] [ 2 ].size() );
+    EXPECT_EQ( 13, phms[ 0 + 1 ][ 1 ][ 2 ].size() );
 }
 
 TEST( ModelspaceFactories, FragmentedPHModelspace ) {
@@ -57,9 +57,117 @@ TEST( ModelspaceFactories, FragmentedPHModelspace ) {
             read_sp_modelspace_from_file(
                 "tests/data/frag_modelspace.dat" ) );
     // 0+ (tz = 0)
-    EXPECT_EQ(  68, phms[ 0 + 1 ][ 1 ] [ 0 ].size() );
+    EXPECT_EQ(  68, phms[ 0 + 1 ][ 1 ][ 0 ].size() );
     // 1- (tz = 0)
-    EXPECT_EQ( 155, phms[ 0 + 1 ][ 0 ] [ 1 ].size() );
+    EXPECT_EQ( 155, phms[ 0 + 1 ][ 0 ][ 1 ].size() );
     // 2+ (tz = 0)
-    EXPECT_EQ( 173, phms[ 0 + 1 ][ 1 ] [ 2 ].size() );
+    EXPECT_EQ( 173, phms[ 0 + 1 ][ 1 ][ 2 ].size() );
+}
+
+TEST( ModelspaceFactories, PPModelspace ) {
+    ParticleParticleModelspace ppms = build_pp_modelspace_from_sp(
+            read_sp_modelspace_from_file(
+                "tests/data/ipm_modelspace.dat" ) );
+    // Sanity checks
+    EXPECT_EQ( 3, ppms.size() );
+    EXPECT_EQ( 2, ppms[1].size() );
+
+    // tz = 0 pp states
+    // 0+ (tz = 0)
+    EXPECT_EQ(  3, ppms[ 0 + 1 ][ (1 + 1)/2 ][ 0 ].size() );
+    // 1+ (tz = 0)
+    EXPECT_EQ(  8, ppms[ 0 + 1 ][ (1 + 1)/2 ][ 1 ].size() );
+    // 2+ (tz = 0)
+    EXPECT_EQ( 10, ppms[ 0 + 1 ][ (1 + 1)/2 ][ 2 ].size() );
+    // There are no legal J's for - parity in the test space, so:
+    // 0- (tz = 0)
+    EXPECT_EQ(  0, ppms[ 0 + 1 ][ (1 - 1)/2 ][ 0 ].size() );
+    // 1- (tz = 0)             
+    EXPECT_EQ(  0, ppms[ 0 + 1 ][ (1 - 1)/2 ][ 1 ].size() );
+    // 2- (tz = 0)             
+    EXPECT_EQ(  0, ppms[ 0 + 1 ][ (1 - 1)/2 ][ 2 ].size() );
+
+    // tz = -1 pp states
+    // 0+ (tz = 0)
+    EXPECT_EQ(  3, ppms[ -1 + 1 ][ (1 + 1)/2 ][ 0 ].size() );
+    // 1+ (tz = 0)
+    EXPECT_EQ(  5, ppms[ -1 + 1 ][ (1 + 1)/2 ][ 1 ].size() );
+    // 2+ (tz = 0)
+    EXPECT_EQ(  5, ppms[ -1 + 1 ][ (1 + 1)/2 ][ 2 ].size() );
+    // There are no legal J's for - parity in the test space, so:
+    // 0- (tz = 0)
+    EXPECT_EQ(  0, ppms[ -1 + 1 ][ (1 - 1)/2 ][ 0 ].size() );
+    // 1- (tz = 0)
+    EXPECT_EQ(  0, ppms[ -1 + 1 ][ (1 - 1)/2 ][ 1 ].size() );
+    // 2- (tz = 0)
+    EXPECT_EQ(  0, ppms[ -1 + 1 ][ (1 - 1)/2 ][ 2 ].size() );
+
+    // tz =  1 pp states
+    // 0+ (tz = 0)
+    EXPECT_EQ(  4, ppms[  1 + 1 ][ (1 + 1)/2 ][ 0 ].size() );
+    // 1+ (tz = 0)
+    EXPECT_EQ(  7, ppms[  1 + 1 ][ (1 + 1)/2 ][ 1 ].size() );
+    // 2+ (tz = 0)
+    EXPECT_EQ(  8, ppms[  1 + 1 ][ (1 + 1)/2 ][ 2 ].size() );
+    // There are no legal J's for - parity in the test space, so:
+    // 0- (tz = 0)
+    EXPECT_EQ(  0, ppms[  1 + 1 ][ (1 - 1)/2 ][ 0 ].size() );
+    // 1- (tz = 0)
+    EXPECT_EQ(  0, ppms[  1 + 1 ][ (1 - 1)/2 ][ 1 ].size() );
+    // 2- (tz = 0)
+    EXPECT_EQ(  0, ppms[  1 + 1 ][ (1 - 1)/2 ][ 2 ].size() );
+}
+
+TEST( ModelspaceFactories, HHModelspace ) {
+    ParticleParticleModelspace hhms = build_hh_modelspace_from_sp(
+            read_sp_modelspace_from_file(
+                "tests/data/ipm_modelspace.dat" ) );
+    // Sanity checks
+    EXPECT_EQ( 3, hhms.size() );
+    EXPECT_EQ( 2, hhms[1].size() );
+
+    // tz = 0 hh states
+    // 0+ (tz = 0)
+    EXPECT_EQ(  8, hhms[ 0 + 1 ][ (1 + 1)/2 ][ 0 ].size() );
+    // 1+ (tz = 0)
+    EXPECT_EQ( 16, hhms[ 0 + 1 ][ (1 + 1)/2 ][ 1 ].size() );
+    // 2+ (tz = 0)
+    EXPECT_EQ( 16, hhms[ 0 + 1 ][ (1 + 1)/2 ][ 2 ].size() );
+    // There are no legal J's for - parity in the test space, so:
+    // 0- (tz = 0)
+    EXPECT_EQ(  6, hhms[ 0 + 1 ][ (1 - 1)/2 ][ 0 ].size() );
+    // 1- (tz = 0)             
+    EXPECT_EQ( 15, hhms[ 0 + 1 ][ (1 - 1)/2 ][ 1 ].size() );
+    // 2- (tz = 0)             
+    EXPECT_EQ( 14, hhms[ 0 + 1 ][ (1 - 1)/2 ][ 2 ].size() );
+
+    // tz = -1 hh states
+    // 0+ (tz = 0)
+    EXPECT_EQ(  7, hhms[ -1 + 1 ][ (1 + 1)/2 ][ 0 ].size() );
+    // 1+ (tz = 0)
+    EXPECT_EQ( 11, hhms[ -1 + 1 ][ (1 + 1)/2 ][ 1 ].size() );
+    // 2+ (tz = 0)
+    EXPECT_EQ(  9, hhms[ -1 + 1 ][ (1 + 1)/2 ][ 2 ].size() );
+    // There are no legal J's for - parity in the test space, so:
+    // 0- (tz = 0)
+    EXPECT_EQ(  3, hhms[ -1 + 1 ][ (1 - 1)/2 ][ 0 ].size() );
+    // 1- (tz = 0)
+    EXPECT_EQ(  7, hhms[ -1 + 1 ][ (1 - 1)/2 ][ 1 ].size() );
+    // 2- (tz = 0)
+    EXPECT_EQ(  6, hhms[ -1 + 1 ][ (1 - 1)/2 ][ 2 ].size() );
+
+    // tz =  1 hh states
+    // 0+ (tz = 0)
+    EXPECT_EQ(  8, hhms[  1 + 1 ][ (1 + 1)/2 ][ 0 ].size() );
+    // 1+ (tz = 0)
+    EXPECT_EQ( 12, hhms[  1 + 1 ][ (1 + 1)/2 ][ 1 ].size() );
+    // 2+ (tz = 0)
+    EXPECT_EQ( 11, hhms[  1 + 1 ][ (1 + 1)/2 ][ 2 ].size() );
+    // There are no legal J's for - parity in the test space, so:
+    // 0- (tz = 0)
+    EXPECT_EQ(  3, hhms[  1 + 1 ][ (1 - 1)/2 ][ 0 ].size() );
+    // 1- (tz = 0)
+    EXPECT_EQ(  8, hhms[  1 + 1 ][ (1 - 1)/2 ][ 1 ].size() );
+    // 2- (tz = 0)
+    EXPECT_EQ(  8, hhms[  1 + 1 ][ (1 - 1)/2 ][ 2 ].size() );
 }
