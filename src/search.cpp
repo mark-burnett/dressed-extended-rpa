@@ -3,6 +3,7 @@
 #include <algorithm>
 
 #include <boost/bind.hpp>
+#include <boost/numeric/conversion/cast.hpp>
 #include <boost/tuple/tuple.hpp>
 
 #include "find_root.h"
@@ -95,7 +96,8 @@ solve_region( const MatrixFactory &mf, const interval_t &region ) {
         std::vector< double > prob
             = get_sub_interval_probabilities( root_intervals, sub_intervals );
         // Go through the sub intervals
-        for ( int s = 0; s < sub_intervals.size(); ++s ) {
+        for ( int s = 0; s < boost::numeric_cast<int>(sub_intervals.size());
+                ++s ) {
             // Locate the sub interval most likely to have a solution.
             int imax = std::max_element( prob.begin(), prob.end() )
                      - prob.begin();
@@ -109,7 +111,9 @@ solve_region( const MatrixFactory &mf, const interval_t &region ) {
                 prob[imax] = 0;
             else {
                 // loop over sub results
-                for ( int sr = 0; sr < sub_results.size(); ++sr ) {
+                for ( int sr = 0;
+                        sr < boost::numeric_cast<int>(sub_results.size());
+                        ++sr ) {
                     // add the solution to our solution set.
                     solutions.push_back( sub_results[sr] );
                     // identify root interval it belongs to
@@ -123,7 +127,7 @@ solve_region( const MatrixFactory &mf, const interval_t &region ) {
                 // end this loop (go back to top loop)
                 break; } } }
     // If these conditions are not met, we have missed a solution
-    assert( num_solutions == solutions.size() );
+    assert( num_solutions == boost::numeric_cast<int>(solutions.size()) );
     assert( root_intervals.empty() );
     return solutions; }
 
@@ -136,7 +140,7 @@ solve_derpa_eigenvalues( double Emax,
                          double epsilon ) {
     double lower = 0;
     std::vector< double > results;
-    for ( int a = 0; a < asymptotes.size(); ++a ) {
+    for ( int a = 0; a < boost::numeric_cast<int>(asymptotes.size()); ++a ) {
         interval_t region( lower + epsilon, asymptotes[a] - epsilon );
         // All done.
         if ( lower > Emax )

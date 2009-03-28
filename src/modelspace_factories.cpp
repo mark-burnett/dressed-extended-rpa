@@ -88,7 +88,7 @@ build_pp_modelspace_from_sp( const SingleParticleModelspace &spms ) {
     for ( int tz = -1; tz <= 1; ++tz ) {
         for ( int parity = -1; parity <= 1; parity += 2 ) {
             // Get maximum J for this tz, parity
-            int Jmax = get_max_ph_J( spms, tz, parity );
+            int Jmax = get_max_pp_J( spms, tz, parity );
             ppms[ tz + 1 ][ (parity + 1)/2 ].resize( Jmax + 1 );
             for ( int J = 0; J <= Jmax; ++J ) {
                 for ( int ip1 = 0; ip1 < spms.size; ++ip1 ) {
@@ -125,13 +125,13 @@ build_hh_modelspace_from_sp( const SingleParticleModelspace &spms ) {
     for ( int tz = -1; tz <= 1; ++tz ) {
         for ( int parity = -1; parity <= 1; parity += 2 ) {
             // Get maximum J for this tz, parity
-            int Jmax = get_max_ph_J( spms, tz, parity );
+            int Jmax = get_max_pp_J( spms, tz, parity );
             hhms[ tz + 1 ][ (parity + 1)/2 ].resize( Jmax + 1 );
             for ( int J = 0; J <= Jmax; ++J ) {
                 for ( int ip1 = 0; ip1 < spms.size; ++ip1 ) {
                     for ( int ip2 = ip1; ip2 < spms.size; ++ip2 ) {
                         // Check for valid isospin and parity
-                        if (   tz != - spms.tz[ip1]     - spms.tz[ip2] ||
+                        if (   tz !=   spms.tz[ip1]     + spms.tz[ip2] ||
                            parity !=   spms.parity[ip1] * spms.parity[ip2] )
                             continue;
                         // Check for valid angular momenta
@@ -225,9 +225,58 @@ build_ph_shells_from_sp( const SingleParticleModelspace &spms ) {
 // --------------------------------------------------------------------
 PPFromSPModelspace
 build_ppsp_modelspace_from_sp( const SingleParticleModelspace &spms ) {
-}
+    // Find maximum J
+    int Jmax = -1;
+    for ( int tz = -1; tz <= 1; ++tz ) {
+        for ( int parity = -1; parity <= 1; parity += 2 ) {
+            int Jtemp = get_max_pp_J( spms, tz, parity );
+            if ( Jtemp > Jmax )
+                Jmax = Jtemp; } }
+
+    PPFromSPModelspace ppspms( Jmax + 1 ); ppspms.resize( Jmax + 1 );
+    for ( int J = 0; J <= Jmax; ++J ) {
+        ppspms[J].resize( spms.size );
+        for ( int ip1 = 0; ip1 < spms.size; ++ip1 ) {
+            for ( int ip2 = 0; ip2 < spms.size; ++ip2 ) {
+                // Check for valid angular momenta
+                if ( !is_triangular(spms.j[ip1], spms.j[ip2], J) )
+                    continue;
+                // Loop over fragments
+                for ( int ip1f = 0;
+                        ip1f < static_cast<int>(spms.pfrag[ip1].size());
+                        ++ip1f ) {
+                    for ( int ip2f = 0;
+                            ip2f < static_cast<int>(spms.pfrag[ip2].size());
+                            ++ip2f ) {
+                        ppspms[J][ip1].push_back( ParticleParticleState(
+                                    ip1, ip2, ip1f, ip2f, J ) ); } } } } }
+    return ppspms; }
 
 PPFromSPModelspace
 build_hhsp_modelspace_from_sp( const SingleParticleModelspace &spms ) {
-}
+    // Find maximum J
+    int Jmax = -1;
+    for ( int tz = -1; tz <= 1; ++tz ) {
+        for ( int parity = -1; parity <= 1; parity += 2 ) {
+            int Jtemp = get_max_pp_J( spms, tz, parity );
+            if ( Jtemp > Jmax )
+                Jmax = Jtemp; } }
 
+    PPFromSPModelspace hhspms( Jmax + 1 ); hhspms.resize( Jmax + 1 );
+    for ( int J = 0; J <= Jmax; ++J ) {
+        hhspms[J].resize( spms.size );
+        for ( int ip1 = 0; ip1 < spms.size; ++ip1 ) {
+            for ( int ip2 = 0; ip2 < spms.size; ++ip2 ) {
+                // Check for valid angular momenta
+                if ( !is_triangular(spms.j[ip1], spms.j[ip2], J) )
+                    continue;
+                // Loop over fragments
+                for ( int ip1f = 0;
+                        ip1f < static_cast<int>(spms.hfrag[ip1].size());
+                        ++ip1f ) {
+                    for ( int ip2f = 0;
+                            ip2f < static_cast<int>(spms.hfrag[ip2].size());
+                            ++ip2f ) {
+                        hhspms[J][ip1].push_back( ParticleParticleState(
+                                    ip1, ip2, ip1f, ip2f, J ) ); } } } } }
+    return hhspms; }

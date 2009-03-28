@@ -93,7 +93,7 @@ int main( int argc, char *argv[] ) {
 
     // Build terms
     std::vector< Term > static_terms
-        = build_static_erpa_terms( Gph, Gpp, phms, ppms, hhms, spms );
+        = build_rpa_terms( Gph, spms );
     std::vector< Term > dynamic_terms
         = build_dynamic_erpa_terms( Gph, Gpp, phms, ppms, hhms,
                 ppspms, hhspms, spms );
@@ -108,7 +108,8 @@ int main( int argc, char *argv[] ) {
     // Matrix Factory
     const std::vector< ParticleHoleState > &ph_states =
                 phms[tz + 1][(parity+1)/2][J];
-    MatrixFactory mf( build_static_matrix( static_terms, ph_states ),
+    MatrixFactory mf(
+            build_static_erpa_matrix( static_terms, dynamic_terms, ph_states ),
             dynamic_terms, spms, ph_states, J, parity, tz );
     // Asymptotes
     std::vector< double > asymptotes = ph_poles( tz, parity, J, phms, spms );

@@ -91,7 +91,7 @@ double ladder_A_term( const ParticleHoleState &ph1,
     // Useful items
     int J      = ph1.J;
     int tz     = boost::numeric_cast<int>(spms.tz[ia] + spms.tz[id]);
-    int parity = spms.parity[ia] * spms.parity[ic];
+    int parity = spms.parity[ia] * spms.parity[id];
 
     // Quick asserts
     assert( ph1.J == ph2.J );
@@ -102,6 +102,7 @@ double ladder_A_term( const ParticleHoleState &ph1,
     int Jpmin = std::max( std::abs( spms.j[ia] - spms.j[id] ),
                           std::abs( spms.j[ib] - spms.j[ic] ) );
     int Jpmax = std::min( spms.j[ia] + spms.j[id], spms.j[ib] + spms.j[ic] );
+    assert( Jpmax < boost::numeric_cast<int>(ppms[1+tz][(parity+1)/2].size()) );
 
     double result = 0;
     for ( int Jp = Jpmin; Jp <= Jpmax; ++Jp ) {
@@ -110,6 +111,7 @@ double ladder_A_term( const ParticleHoleState &ph1,
         double JpTerm = 0;
         // Intermediate terms above Fermi surface
         BOOST_FOREACH(pp_t i_pp, ppms[1 + tz][(parity+1)/2][Jp]) {
+            assert( parity == spms.parity[i_pp.ip1]*spms.parity[i_pp.ip2] );
             double Si_pp = spms.pfrag[i_pp.ip1][i_pp.ip1f].S
                          * spms.pfrag[i_pp.ip2][i_pp.ip2f].S;
             JpTerm += Si_pp * Gpp( left, i_pp ) * Gpp( i_pp, right ) /
@@ -119,6 +121,7 @@ double ladder_A_term( const ParticleHoleState &ph1,
         }
         // Intermediate terms below Fermi surface
         BOOST_FOREACH(pp_t i_hh, hhms[1 + tz][(parity+1)/2][Jp]) {
+            assert( parity == spms.parity[i_hh.ip1]*spms.parity[i_hh.ip2] );
             double Si_hh = spms.hfrag[i_hh.ip1][i_hh.ip1f].S
                          * spms.hfrag[i_hh.ip2][i_hh.ip2f].S;
             JpTerm += Si_hh * Gpp( left, i_hh ) * Gpp( i_hh, right ) /
@@ -155,7 +158,7 @@ double ladder_B_term( const ParticleHoleState &ph1,
     // Useful items
     int J      = ph1.J;
     int tz     = boost::numeric_cast<int>(spms.tz[ia] + spms.tz[id]);
-    int parity = spms.parity[ia] * spms.parity[ic];
+    int parity = spms.parity[ia] * spms.parity[id];
 
     // Quick asserts
     assert( ph1.J == ph2.J );
@@ -166,6 +169,7 @@ double ladder_B_term( const ParticleHoleState &ph1,
     int Jpmin = std::max( std::abs( spms.j[ia] - spms.j[id] ),
                           std::abs( spms.j[ib] - spms.j[ic] ) );
     int Jpmax = std::min( spms.j[ia] + spms.j[id], spms.j[ib] + spms.j[ic] );
+    assert( Jpmax < boost::numeric_cast<int>(ppms[1+tz][(parity+1)/2].size()) );
 
     double result = 0;
     for ( int Jp = Jpmin; Jp <= Jpmax; ++Jp ) {
@@ -174,6 +178,7 @@ double ladder_B_term( const ParticleHoleState &ph1,
         double JpTerm = 0;
         // Intermediate terms above Fermi surface
         BOOST_FOREACH(pp_t i_pp, ppms[1 + tz][(parity+1)/2][Jp]) {
+            assert( parity == spms.parity[i_pp.ip1]*spms.parity[i_pp.ip2] );
             double Si_pp = spms.pfrag[i_pp.ip1][i_pp.ip1f].S
                          * spms.pfrag[i_pp.ip2][i_pp.ip2f].S;
             JpTerm += Si_pp * Gpp( left, i_pp ) * Gpp( i_pp, right ) /
@@ -183,6 +188,7 @@ double ladder_B_term( const ParticleHoleState &ph1,
         }
         // Intermediate terms below Fermi surface
         BOOST_FOREACH(pp_t i_hh, hhms[1 + tz][(parity+1)/2][Jp]) {
+            assert( parity == spms.parity[i_hh.ip1]*spms.parity[i_hh.ip2] );
             double Si_hh = spms.hfrag[i_hh.ip1][i_hh.ip1f].S
                          * spms.hfrag[i_hh.ip2][i_hh.ip2f].S;
             JpTerm += Si_hh * Gpp( left, i_hh ) * Gpp( i_hh, right ) /

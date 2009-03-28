@@ -40,7 +40,7 @@ TEST( DRPA, FunctionalTest ) {
         int parity = -1;
         int J      =  0;
         util::cvector_t vals = util::eigenvalues(
-              util::matrix_t(build_static_matrix( terms,
+              util::matrix_t(build_static_rpa_matrix( terms,
                       phms[tz+1][(parity+1)/2][J] ) ) );
         std::vector< double > real_vals( vals.size() );
         real_vals.resize( vals.size() );
@@ -58,7 +58,7 @@ TEST( DRPA, FunctionalTest ) {
         int parity =  1;
         int J      =  0;
         util::cvector_t vals = util::eigenvalues(
-              util::matrix_t(build_static_matrix( terms,
+              util::matrix_t(build_static_rpa_matrix( terms,
                       phms[tz+1][(parity+1)/2][J] ) ) );
         std::vector< double > real_vals( vals.size() );
         real_vals.resize( vals.size() );
@@ -75,7 +75,7 @@ TEST( DRPA, FunctionalTest ) {
         int parity = -1;
         int J      =  1;
         util::cvector_t vals = util::eigenvalues(
-              util::matrix_t(build_static_matrix( terms,
+              util::matrix_t(build_static_rpa_matrix( terms,
                       phms[tz+1][(parity+1)/2][J] ) ) );
         std::vector< double > real_vals( vals.size() );
         real_vals.resize( vals.size() );
@@ -92,7 +92,7 @@ TEST( DRPA, FunctionalTest ) {
         int parity =  1;
         int J      =  1;
         util::cvector_t vals = util::eigenvalues(
-              util::matrix_t(build_static_matrix( terms,
+              util::matrix_t(build_static_rpa_matrix( terms,
                       phms[tz+1][(parity+1)/2][J] ) ) );
         std::vector< double > real_vals( vals.size() );
         real_vals.resize( vals.size() );
@@ -109,7 +109,7 @@ TEST( DRPA, FunctionalTest ) {
         int parity = -1;
         int J      =  2;
         util::cvector_t vals = util::eigenvalues(
-              util::matrix_t(build_static_matrix( terms,
+              util::matrix_t(build_static_rpa_matrix( terms,
                       phms[tz+1][(parity+1)/2][J] ) ) );
         std::vector< double > real_vals( vals.size() );
         real_vals.resize( vals.size() );
@@ -127,7 +127,7 @@ TEST( DRPA, FunctionalTest ) {
         int parity =  1;
         int J      =  2;
         util::cvector_t vals = util::eigenvalues(
-              util::matrix_t(build_static_matrix( terms,
+              util::matrix_t(build_static_rpa_matrix( terms,
                       phms[tz+1][(parity+1)/2][J] ) ) );
         std::vector< double > real_vals( vals.size() );
         real_vals.resize( vals.size() );
@@ -145,7 +145,7 @@ TEST( DRPA, FunctionalTest ) {
         int parity = -1;
         int J      =  3;
         util::cvector_t vals = util::eigenvalues(
-              util::matrix_t(build_static_matrix( terms,
+              util::matrix_t(build_static_rpa_matrix( terms,
                       phms[tz+1][(parity+1)/2][J] ) ) );
         std::vector< double > real_vals( vals.size() );
         real_vals.resize( vals.size() );
@@ -162,7 +162,7 @@ TEST( DRPA, FunctionalTest ) {
         int parity =  1;
         int J      =  3;
         util::cvector_t vals = util::eigenvalues(
-              util::matrix_t(build_static_matrix( terms,
+              util::matrix_t(build_static_rpa_matrix( terms,
                       phms[tz+1][(parity+1)/2][J] ) ) );
         std::vector< double > real_vals( vals.size() );
         real_vals.resize( vals.size() );

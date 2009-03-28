@@ -75,12 +75,7 @@ int main( int argc, char *argv[] ) {
             read_sp_modelspace_from_file(
                 config_vm["modelspace_file"].as<std::string>() );
     ParticleHoleModelspace phms = build_ph_modelspace_from_sp( spms );
-    /*
-    ParticleParticleModelspace ppms   = build_pp_modelspace_from_sp( spms );
-    ParticleParticleModelspace hhms   = build_hh_modelspace_from_sp( spms );
-    PPFromSPModelspace         ppspms = build_ppsp_modelspace_from_sp( spms );
-    PPFromSPModelspace         hhspms = build_hhsp_modelspace_from_sp( spms );
-    */
+
     std::cout << "Modelspaces built.  PH modelspace sizes:" << std::endl;
     print_ph_modelspace_sizes( std::cout, 0, phms );
 
@@ -99,7 +94,7 @@ int main( int argc, char *argv[] ) {
     // loop/build matricies
     std::cout << "Constructing RPA Matrix for tz = " << tz
         << ", J = " << J << ", parity = " << parity << std::endl;
-    util::matrix_t rpa_matrix( build_static_matrix( rpa_terms,
+    util::matrix_t rpa_matrix( build_static_rpa_matrix( rpa_terms,
                 phms[tz + 1][(parity+1)/2][J] ) );
     std::cout << "Performing eigenvalue calculation." << std::endl;
 

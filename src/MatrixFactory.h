@@ -21,7 +21,7 @@ class MatrixFactory {
                   assert( 1 == parity || -1 == parity );
                   assert( 1 >= tz && -1 <= tz );
                   assert( static_matrix.size1() == static_matrix.size2() );
-                  assert( ph_states.size() == static_matrix.size1() );
+                  assert( 2 * ph_states.size()  == static_matrix.size1() );
               }
         util::matrix_t build( double E ) const;
     private:
@@ -33,7 +33,11 @@ class MatrixFactory {
 };
 
 util::matrix_t
-build_static_matrix( const std::vector< Term > &terms,
-                     const std::vector< ParticleHoleState > &ph_states );
+build_static_rpa_matrix( const std::vector< Term > &terms,
+                         const std::vector< ParticleHoleState > &ph_states );
+util::matrix_t
+build_static_erpa_matrix( const std::vector< Term > &static_terms,
+                          const std::vector< Term > &dynamic_terms,
+                          const std::vector< ParticleHoleState > &ph_states );
 
 #endif // _MATRIX_FACTORY_H_

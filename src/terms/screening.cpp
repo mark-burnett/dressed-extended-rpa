@@ -100,6 +100,8 @@ double screening_A_term( const ParticleHoleState &ph1,
     int Jpmin = std::max( std::abs( spms.j[ia] - spms.j[ic] ),
                           std::abs( spms.j[ib] - spms.j[id] ) );
     int Jpmax = std::min( spms.j[ia] + spms.j[ic], spms.j[ib] + spms.j[id] );
+    assert( Jpmax < boost::numeric_cast<int>(phms[1+tz][(parity+1)/2].size()) );
+    assert( Jpmax < boost::numeric_cast<int>(phms[1-tz][(parity+1)/2].size()) );
 
     double result = 0;
     for ( int Jp = Jpmin; Jp <= Jpmax; ++Jp ) {
@@ -169,6 +171,8 @@ double screening_B_term( const ParticleHoleState &ph1,
     int Jpmin = std::max( std::abs( spms.j[ia] - spms.j[ic] ),
                           std::abs( spms.j[ib] - spms.j[id] ) );
     int Jpmax = std::min( spms.j[ia] + spms.j[ic], spms.j[ib] + spms.j[id] );
+    assert( Jpmax < boost::numeric_cast<int>(phms[1+tz][(parity+1)/2].size()) );
+
     double result = 0;
     for ( int Jp = Jpmin; Jp <= Jpmax; ++Jp ) {
         ph_t left(  ia, ic, -1, -1, Jp );

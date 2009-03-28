@@ -6,6 +6,36 @@
 // SP Modelspace helpers
 // --------------------------------------------------------------------
 
+/*
+int get_max_pp_J( const SingleParticleModelspace &spms, int tz, int parity ) {
+    int J = -1;
+    for ( int a = 0; a < spms.size; ++a ) {
+        for ( int b = a; b < spms.size;  ++b ) {
+            if ( parity != spms.parity[a] * spms.parity[b] ||
+                 tz     != spms.tz[a]     + spms.tz[b]     )
+                continue;
+            if ( spms.pfrag[a].size() < 1 || spms.pfrag[b].size() < 1 )
+                continue;
+            int nJ = spms.j[a] + spms.j[b];
+            if ( nJ > J )
+                J = nJ; } }
+    return J; }
+
+int get_max_hh_J( const SingleParticleModelspace &spms, int tz, int parity ) {
+    int J = -1;
+    for ( int a = 0; a < spms.size; ++a ) {
+        for ( int b = a; b < spms.size;  ++b ) {
+            if ( parity != spms.parity[a] * spms.parity[b] ||
+                 tz     != spms.tz[a]     + spms.tz[b]     )
+                continue;
+            if ( spms.hfrag[a].size() < 1 || spms.hfrag[b].size() < 1 )
+                continue;
+            int nJ = spms.j[a] + spms.j[b];
+            if ( nJ > J )
+                J = nJ; } }
+    return J; }
+*/
+
 int get_max_pp_J( const SingleParticleModelspace &spms, int tz, int parity ) {
     int J = -1;
     for ( int a = 0; a < spms.size; ++a ) {
@@ -24,7 +54,8 @@ int get_max_ph_J( const SingleParticleModelspace &spms, int tz, int parity ) {
         for ( int h = 0; h < spms.size; ++h ) {
             // Check for right parity and isospin
             if ( parity != spms.parity[p] * spms.parity[h] ||
-                 tz     != spms.tz[p]     - spms.tz[h]     )
+                 (  tz   != spms.tz[p]    - spms.tz[h] &&
+                   -tz   != spms.tz[p]    - spms.tz[h] ) )
                 continue;
             // Check whether we have actual particle and hole fragments here
             if ( spms.pfrag[p].size() < 1 ||
@@ -60,7 +91,7 @@ std::vector< double > ph_poles( int tz, int parity, int J,
         = phms[tz+1][(parity+1)/2][J];
 
     std::vector< double > poles;
-    for ( int i = 0; i < ph_states.size(); ++i ) {
+    for ( int i = 0; i < boost::numeric_cast<int>(ph_states.size()); ++i ) {
         poles.push_back( ph_energy( ph_states[i], spms ) ); }
 
     std::sort( poles.begin(), poles.end() );
