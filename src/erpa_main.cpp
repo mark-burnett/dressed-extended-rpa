@@ -75,11 +75,10 @@ int main( int argc, char *argv[] ) {
     SingleParticleModelspace spms =
             read_sp_modelspace_from_file(
                 config_vm["modelspace_file"].as<std::string>() );
-    ParticleHoleModelspace phms = build_ph_modelspace_from_sp( spms );
-    ParticleParticleModelspace ppms   = build_pp_modelspace_from_sp( spms );
-    ParticleParticleModelspace hhms   = build_hh_modelspace_from_sp( spms );
-    PPFromSPModelspace         ppspms = build_ppsp_modelspace_from_sp( spms );
-    PPFromSPModelspace         hhspms = build_hhsp_modelspace_from_sp( spms );
+    ParticleHoleModelspace     phms = build_ph_modelspace_from_sp( spms );
+    ParticleParticleModelspace ppms = build_pp_modelspace_from_sp( spms );
+    ParticleParticleModelspace hhms = build_hh_modelspace_from_sp( spms );
+    SEModelspace               sems = build_se_modelspace_from_sp( spms );
 
     std::cout << "Modelspaces built.  PH modelspace sizes:" << std::endl;
     print_ph_modelspace_sizes( std::cout, 0, phms );
@@ -95,12 +94,11 @@ int main( int argc, char *argv[] ) {
     std::vector< Term > static_terms
         = build_rpa_terms( Gph, spms );
     std::vector< Term > dynamic_terms
-        = build_dynamic_erpa_terms( Gph, Gpp, phms, ppms, hhms,
-                ppspms, hhspms, spms );
+        = build_dynamic_erpa_terms( Gph, Gpp, phms, ppms, hhms, sems, spms );
 
     int tz     =  0;
-    int parity = -1;
-    int J      =  1;
+    int parity =  1;
+    int J      =  0;
 
     // loop/build matricies
     std::cout << "Constructing static part of matrix for tz = " << tz
@@ -112,7 +110,8 @@ int main( int argc, char *argv[] ) {
             build_static_erpa_matrix( static_terms, dynamic_terms, ph_states ),
             dynamic_terms, spms, ph_states, J, parity, tz );
     // Asymptotes
-    std::vector< double > asymptotes = ph_poles( tz, parity, J, phms, spms );
+    std::vector< double > asymptotes
+        = get_erpa_asymptotes( tz, parity, J, phms, spms );
 
     std::cout << "Performing self-consistent eigenvalue calculation."
         << std::endl;

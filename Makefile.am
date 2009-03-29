@@ -22,13 +22,17 @@ src_libderpa_la_SOURCES = src/angular_momentum.cpp src/io.cpp src/pandya.cpp\
 						  src/term_factories.cpp
 
 # --- Main programs ---
-bin_PROGRAMS     = bin/drpa bin/erpa
+bin_PROGRAMS     = bin/drpa bin/erpa bin/plot_eigenvalues
 
 bin_drpa_SOURCES = src/drpa_main.cpp
 bin_drpa_LDADD   = src/libderpa.la
 
 bin_erpa_SOURCES = src/erpa_main.cpp
 bin_erpa_LDADD   = src/libderpa.la
+
+bin_plot_eigenvalues_SOURCES = src/plot_eigenvalues.cpp
+bin_plot_eigenvalues_LDADD   = src/libderpa.la
+
 
 # --- Tests ---
 check_PROGRAMS   = bin/test

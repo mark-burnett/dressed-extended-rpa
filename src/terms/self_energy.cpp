@@ -22,8 +22,7 @@ self_energy( const std::vector< ParticleHoleState > &vec, double E,
              position_t pos, const PPInteraction &Gpp,
              const ParticleParticleModelspace &ppms,
              const ParticleParticleModelspace &hhms,
-             const PPFromSPModelspace &ppspms,
-             const PPFromSPModelspace &hhspms,
+             const SEModelspace               &sems,
              const SingleParticleModelspace &spms ) {
     int size = vec.size();
     util::matrix_t m( size, size );
@@ -39,16 +38,16 @@ self_energy( const std::vector< ParticleHoleState > &vec, double E,
         switch ( pos ) {
             case ENUM_A:
                 m( i, i ) = internal::SE_particle_line( ph, E, Gpp,
-                        ppms, hhms, ppspms, hhspms, spms )
+                        ppms, hhms, sems, spms )
                     + internal::SE_hole_line( ph, E, Gpp,
-                        ppms, hhms, ppspms, hhspms, spms );
+                        ppms, hhms, sems, spms );
                 break;
             case ENUM_A_STAR:
                 // A_STAR phase is always 1 on the diagonal
                 m( i, i ) = internal::SE_particle_line( ph, -E, Gpp,
-                        ppms, hhms, ppspms, hhspms, spms )
+                        ppms, hhms, sems, spms )
                     + internal::SE_hole_line( ph, -E, Gpp,
-                        ppms, hhms, ppspms, hhspms, spms );
+                        ppms, hhms, sems, spms );
                 break;
             default:
                 throw invalid_matrix_position();
@@ -64,8 +63,7 @@ double SE_particle_line( const ParticleHoleState &ph, double E,
                          const PPInteraction &Gpp,
                          const ParticleParticleModelspace &ppms,
                          const ParticleParticleModelspace &hhms,
-                         const PPFromSPModelspace &ppspms,
-                         const PPFromSPModelspace &hhspms,
+                         const SEModelspace &sems,
                          const SingleParticleModelspace &spms ) {
     typedef ParticleParticleState pp_t;
 
@@ -84,7 +82,8 @@ double SE_particle_line( const ParticleHoleState &ph, double E,
         double JpTerm = 0;
         // make list of outter left side states
         // loop over outter left states
-        BOOST_FOREACH( pp_t left, hhspms[Jp][ia] ) {
+        assert( 0 != sems.ph[Jp][ia][iaf].size() );
+        BOOST_FOREACH( pp_t left, sems.ph[Jp][ia][iaf] ) {
         //      make list of inner right side states
         //      loop over inner right side states
             int tz =
@@ -101,7 +100,7 @@ double SE_particle_line( const ParticleHoleState &ph, double E,
         }
         //  make list of outter right side states
         //  loop over outter right states
-        BOOST_FOREACH( pp_t left, ppspms[Jp][ia] ) {
+        BOOST_FOREACH( pp_t left, sems.pp[Jp][ia][iaf] ) {
         //      make inner left states
         //      loop over inner left states
             int tz =
@@ -114,7 +113,6 @@ double SE_particle_line( const ParticleHoleState &ph, double E,
                           spms.hfrag[right.ip1][right.ip1f].E
                         + spms.hfrag[right.ip2][right.ip2f].E
                         - spms.pfrag[left.ip2][left.ip2f].E ) );
-
             }
         }
         result += JpTerm * ( 2 * Jp + 1 );
@@ -126,8 +124,7 @@ double SE_hole_line    ( const ParticleHoleState &ph, double E,
                          const PPInteraction &Gpp,
                          const ParticleParticleModelspace &ppms,
                          const ParticleParticleModelspace &hhms,
-                         const PPFromSPModelspace &ppspms,
-                         const PPFromSPModelspace &hhspms,
+                         const SEModelspace &sems,
                          const SingleParticleModelspace &spms ) {
     typedef ParticleParticleState pp_t;
     // Shell indicies
@@ -145,7 +142,7 @@ double SE_hole_line    ( const ParticleHoleState &ph, double E,
         double JpTerm = 0;
         // make list of outter left side states
         // loop over outter left states
-        BOOST_FOREACH( pp_t left, hhspms[Jp][ib] ) {
+        BOOST_FOREACH( pp_t left, sems.hh[Jp][ib][ibf] ) {
         //      make list of inner right side states
         //      loop over inner right side states
             int tz =
@@ -162,7 +159,8 @@ double SE_hole_line    ( const ParticleHoleState &ph, double E,
         }
         //  make list of outter right side states
         //  loop over outter right states
-        BOOST_FOREACH( pp_t left, ppspms[Jp][ib] ) {
+        assert( 0 != sems.hp[Jp][ib][ibf].size() );
+        BOOST_FOREACH( pp_t left, sems.hp[Jp][ib][ibf] ) {
         //      make inner left states
         //      loop over inner left states
             int tz =
@@ -187,12 +185,11 @@ double SE_hole_line    ( const ParticleHoleState &ph, double E,
 Term make_self_energy( const PPInteraction &Gpp,
                        const ParticleParticleModelspace &ppms,
                        const ParticleParticleModelspace &hhms,
-                       const PPFromSPModelspace &ppspms,
-                       const PPFromSPModelspace &hhspms,
+                       const SEModelspace &sems,
                        const SingleParticleModelspace &spms ) {
     return boost::bind( self_energy, _1, _2, _3, boost::cref(Gpp),
-            boost::cref(ppms), boost::cref(hhms), boost::cref(ppspms),
-            boost::cref(hhspms), boost::cref(spms) );
+            boost::cref(ppms), boost::cref(hhms), boost::cref(sems),
+            boost::cref(spms) );
 }
 
 } // end namespace terms

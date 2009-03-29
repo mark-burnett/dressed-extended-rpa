@@ -6,36 +6,6 @@
 // SP Modelspace helpers
 // --------------------------------------------------------------------
 
-/*
-int get_max_pp_J( const SingleParticleModelspace &spms, int tz, int parity ) {
-    int J = -1;
-    for ( int a = 0; a < spms.size; ++a ) {
-        for ( int b = a; b < spms.size;  ++b ) {
-            if ( parity != spms.parity[a] * spms.parity[b] ||
-                 tz     != spms.tz[a]     + spms.tz[b]     )
-                continue;
-            if ( spms.pfrag[a].size() < 1 || spms.pfrag[b].size() < 1 )
-                continue;
-            int nJ = spms.j[a] + spms.j[b];
-            if ( nJ > J )
-                J = nJ; } }
-    return J; }
-
-int get_max_hh_J( const SingleParticleModelspace &spms, int tz, int parity ) {
-    int J = -1;
-    for ( int a = 0; a < spms.size; ++a ) {
-        for ( int b = a; b < spms.size;  ++b ) {
-            if ( parity != spms.parity[a] * spms.parity[b] ||
-                 tz     != spms.tz[a]     + spms.tz[b]     )
-                continue;
-            if ( spms.hfrag[a].size() < 1 || spms.hfrag[b].size() < 1 )
-                continue;
-            int nJ = spms.j[a] + spms.j[b];
-            if ( nJ > J )
-                J = nJ; } }
-    return J; }
-*/
-
 int get_max_pp_J( const SingleParticleModelspace &spms, int tz, int parity ) {
     int J = -1;
     for ( int a = 0; a < spms.size; ++a ) {
@@ -84,9 +54,9 @@ double ph_energy( const ParticleHoleState &ph,
     return spms.pfrag[ph.ip][ph.ipf].E - spms.hfrag[ph.ih][ph.ihf].E; }
 
 // Returns the (sorted) poles of a particle hole modelspace
-std::vector< double > ph_poles( int tz, int parity, int J,
-                                const ParticleHoleModelspace &phms,
-                                const SingleParticleModelspace &spms ) {
+std::vector< double > get_ph_poles( int tz, int parity, int J,
+                                    const ParticleHoleModelspace &phms,
+                                    const SingleParticleModelspace &spms ) {
     const std::vector< ParticleHoleState > &ph_states
         = phms[tz+1][(parity+1)/2][J];
 
@@ -97,6 +67,16 @@ std::vector< double > ph_poles( int tz, int parity, int J,
     std::sort( poles.begin(), poles.end() );
 
     return poles; }
+
+std::vector< double > get_erpa_asymptotes( int tz, int parity, int J,
+                                const ParticleHoleModelspace &phms,
+                                const SingleParticleModelspace &spms ) {
+    std::vector< double > ph_poles = get_ph_poles( tz, parity, J, phms, spms );
+    std::vector< double > result;
+    for ( int i = 0; i < boost::numeric_cast<int>(ph_poles.size()); ++i ) {
+        for ( int j = 0; j < boost::numeric_cast<int>(ph_poles.size()); ++j ) {
+            result.push_back( ph_poles[i] + ph_poles[j] ); } }
+    return result; }
 
 void print_ph_modelspace_sizes( std::ostream &o,
                                 const ParticleHoleModelspace &phms ) {

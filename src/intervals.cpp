@@ -1,3 +1,4 @@
+//#include <iostream>
 #include <cassert>
 #include <vector>
 #include <algorithm>
@@ -14,6 +15,7 @@ build_root_intervals( const std::vector< double > &A,
     assert( A.size() == B.size() );
     std::vector< interval_t > intervals;
     for ( int i = 0; i < boost::numeric_cast<int>(A.size()); ++i ) {
+//        std::cout << A[i] << " " << B[i] << std::endl;
         intervals.push_back( interval_t( A[i], B[i] ) ); }
     return intervals;
 }

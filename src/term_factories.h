@@ -22,8 +22,7 @@ std::vector< Term > build_dynamic_erpa_terms(
                                     const ParticleHoleModelspace     &phms,
                                     const ParticleParticleModelspace &ppms,
                                     const ParticleParticleModelspace &hhms,
-                                    const PPFromSPModelspace         &ppspms,
-                                    const PPFromSPModelspace         &hhspms,
+                                    const SEModelspace               &sems,
                                     const SingleParticleModelspace   &spms );
 
 std::vector< Term > build_dynamic_derpa_terms(

@@ -1,4 +1,4 @@
-//#include <iostream>
+#include <iostream>
 #include <cmath>
 #include <boost/function.hpp>
 
@@ -18,8 +18,8 @@ double false_position( const boost::function< double (double) > &f,
 
     // fa and fb must have opposite signs to ensure a solution.
     if ( fa * fb > precision ) {
-//        std::cout << "false_position failure: a = " << a << ", b = " << b
-//            << ", fa = " << fa << ", fb = " << fb << std::endl;
+        std::cout << "false_position failure: a = " << a << ", b = " << b
+            << ", fa = " << fa << ", fb = " << fb << std::endl;
         throw root_finding_error();
     }
 

@@ -12,7 +12,7 @@ TEST( Modelspace, Poles ) {
     ParticleHoleModelspace phms = build_ph_modelspace_from_sp( spms );
 
     // Just check the 0+
-    std::vector< double > poles = ph_poles( 0, 1, 0, phms, spms );
+    std::vector< double > poles = get_ph_poles( 0, 1, 0, phms, spms );
 
     EXPECT_EQ( 4, poles.size() );
     EXPECT_FLOAT_EQ( 40.854398, poles[0] );

@@ -18,8 +18,7 @@ self_energy( const std::vector< ParticleHoleState > &vec, double E,
              position_t pos, const PPInteraction &Gpp,
              const ParticleParticleModelspace &ppms,
              const ParticleParticleModelspace &hhms,
-             const PPFromSPModelspace &ppspms,
-             const PPFromSPModelspace &hhspms,
+             const SEModelspace &sems,
              const SingleParticleModelspace &spms );
 
 
@@ -28,23 +27,20 @@ double SE_particle_line( const ParticleHoleState &ph, double E,
                          const PPInteraction &Gpp,
                          const ParticleParticleModelspace &ppms,
                          const ParticleParticleModelspace &hhms,
-                         const PPFromSPModelspace &ppspms,
-                         const PPFromSPModelspace &hhspms,
+                         const SEModelspace &sems,
                          const SingleParticleModelspace &spms );
 double SE_hole_line    ( const ParticleHoleState &ph, double E,
                          const PPInteraction &Gpp,
                          const ParticleParticleModelspace &ppms,
                          const ParticleParticleModelspace &hhms,
-                         const PPFromSPModelspace &ppspms,
-                         const PPFromSPModelspace &hhspms,
+                         const SEModelspace &sems,
                          const SingleParticleModelspace &spms );
 } // end namespace internal
 
 Term make_self_energy( const PPInteraction &Gpp,
                        const ParticleParticleModelspace &ppms,
                        const ParticleParticleModelspace &hhms,
-                       const PPFromSPModelspace &ppspms,
-                       const PPFromSPModelspace &hhspms,
+                       const SEModelspace &sems,
                        const SingleParticleModelspace &spms );
 
 } // end namespace terms

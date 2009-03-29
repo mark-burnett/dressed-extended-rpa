@@ -1,3 +1,4 @@
+#include <boost/foreach.hpp>
 #include <cassert>
 #include <vector>
 #include <algorithm>
@@ -36,6 +37,23 @@ int get_num_solutions( const std::vector< double > &left_vals,  double left,
 
     return num_solutions; }
 
+std::vector< interval_t >
+make_root_intervals( const std::vector< double > &left_vals,  double left,
+                     const std::vector< double > &right_vals, double right,
+                     const interval_t &region, int num_solutions ) {
+    boost::tuple< int, int > ab_left  = split_values( left_vals,  left );
+    boost::tuple< int, int > ab_right = split_values( right_vals, right );
+
+    std::vector< double > lower_bounds( num_solutions ),
+                          upper_bounds( num_solutions );
+    for ( int i = 0; i < num_solutions; ++i ) {
+        double lval = right_vals[ ab_right.get<1>() - num_solutions + i ];
+        double uval = left_vals [i + ab_left.get<1>()];
+        std::cout << lval << ", " << uval << std::endl;
+        lower_bounds[i] = std::max( lval, region.lower() );
+        upper_bounds[i] = std::min( uval, region.upper() ); }
+    return build_root_intervals( lower_bounds, upper_bounds); }
+
 double base_root_function( double E, const MatrixFactory &mf ) {
     util::matrix_t m = mf.build(E);
     m -= E * ublas::identity_matrix< double >( m.size1() );
@@ -59,9 +77,14 @@ solve_region( const MatrixFactory &mf, const interval_t &region ) {
     std::vector< double > upper_vals
         = util::sorted_eigenvalues( mf.build( region.upper() ) );
 
+    for ( int i = 0; i <
+            boost::numeric_cast<int>(lower_vals.size()); ++i ) {
+        std::cout << lower_vals[i] << " > " << upper_vals[i] << std::endl; }
     // Get basic information about the region.
     int num_solutions = get_num_solutions( lower_vals, region.lower(),
                                            upper_vals, region.upper() );
+    std::cout << "(" << region.lower() << ", " << region.upper() << ") -> "
+        << num_solutions << std::endl;
 
     // Return an empty vector if there are no solutions in the region:
     if ( 0 == num_solutions )
@@ -69,7 +92,9 @@ solve_region( const MatrixFactory &mf, const interval_t &region ) {
 
     // Generate the root intervals
     std::vector< interval_t > root_intervals
-        = build_root_intervals( lower_vals, upper_vals );
+        = make_root_intervals( lower_vals, region.lower(),
+                               upper_vals, region.upper(),
+                               region, num_solutions );
 
     // Return the answer if there is only one solution in the region.
     // NOTE: We generated the root intervals first, because the root interval
@@ -145,6 +170,8 @@ solve_derpa_eigenvalues( double Emax,
         // All done.
         if ( lower > Emax )
             break;
+        std::cout << "(" << region.lower() << ", " << region.upper() << ")"
+            << std::endl;
         std::vector< double > region_results = solve_region( mf, region );
         results.insert( results.end(), region_results.begin(),
                                        region_results.end() );

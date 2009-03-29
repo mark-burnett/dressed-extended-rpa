@@ -107,24 +107,33 @@ typedef std::vector< std::vector< std::vector<
 > > > ParticleParticleModelspace;
 
 // This type of space is used for the self energy terms in the ERPA
-// space[J][ isp ] -> vector< PPState >
-typedef std::vector< std::vector<
+// space[J][ isp ][ ispf ] -> vector< PPState >
+typedef std::vector< std::vector< std::vector<
     std::vector< ParticleParticleState >
-> > PPFromSPModelspace;
+> > > PPFromSP;
+
+struct SEModelspace {
+    PPFromSP pp;
+    PPFromSP hh;
+    PPFromSP ph;
+    PPFromSP hp;
+};
 
 // Some SP Modelspace functions
 int get_max_pp_J(   const SingleParticleModelspace &spms, int tz, int parity );
-//int get_max_hh_J(   const SingleParticleModelspace &spms, int tz, int parity );
-//int get_max_full_J( const SingleParticleModelspace &spms, int tz, int parity );
 int get_max_ph_J(   const SingleParticleModelspace &spms, int tz, int parity );
 
 // Some PH Modelspace functions
 double ph_energy( const ParticleHoleState &ph,
                   const SingleParticleModelspace &spms );
-std::vector< double > ph_poles( int tz, int parity, int J,
+
+std::vector< double > get_ph_poles( int tz, int parity, int J,
+                                    const ParticleHoleModelspace &phms,
+                                    const SingleParticleModelspace &spms );
+
+std::vector< double > get_erpa_asymptotes( int tz, int parity, int J,
                                 const ParticleHoleModelspace &phms,
                                 const SingleParticleModelspace &spms );
-
 // IO Functions
 void print_ph_modelspace_sizes( std::ostream &o,
                                 const ParticleHoleModelspace &phms );

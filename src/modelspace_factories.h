@@ -21,11 +21,20 @@ build_ph_modelspace_from_sp( const SingleParticleModelspace &spms );
 ParticleHoleModelspace
 build_ph_shells_from_sp( const SingleParticleModelspace &spms );
 
-// Self-energy only modelspaces
-PPFromSPModelspace
+// Modelspace used only in self-energy terms
+PPFromSP
 build_ppsp_modelspace_from_sp( const SingleParticleModelspace &spms );
 
-PPFromSPModelspace
+PPFromSP
 build_hhsp_modelspace_from_sp( const SingleParticleModelspace &spms );
+
+PPFromSP
+build_phsp_modelspace_from_sp( const SingleParticleModelspace &spms );
+
+PPFromSP
+build_hpsp_modelspace_from_sp( const SingleParticleModelspace &spms );
+
+SEModelspace
+build_se_modelspace_from_sp( const SingleParticleModelspace &spms );
 
 #endif // _MODELSPACE_FACTORIES_H_

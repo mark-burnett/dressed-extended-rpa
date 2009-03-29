@@ -108,26 +108,26 @@ double screening_A_term( const ParticleHoleState &ph1,
         ph_t left(  ia, ic, -1, -1, Jp );
         ph_t right( ib, id, -1, -1, Jp );
         double JpTerm = 0;
-        // Forward going terms
         BOOST_FOREACH(ph_t i_ph, phms[1 + tz][(parity+1)/2][Jp]) {
             double Si_ph = spms.pfrag[i_ph.ip][i_ph.ipf].S
                          * spms.hfrag[i_ph.ih][i_ph.ihf].S;
+            // Forward going terms
             JpTerm += Si_ph *
                 Gph( left, i_ph ) * Gph( i_ph, right ) /
                 ( E - ( spms.pfrag[ic][icf].E - spms.hfrag[ib][ibf].E
                         + spms.pfrag[ i_ph.ip ][ i_ph.ipf ].E
-                        - spms.pfrag[ i_ph.ih ][ i_ph.ihf ].E ) );
+                        - spms.hfrag[ i_ph.ih ][ i_ph.ihf ].E ) );
         }
-        // Backward going terms
         BOOST_FOREACH(ph_t i_ph, phms[1 - tz][(parity+1)/2][Jp] ) {
             double Si_ph = spms.pfrag[i_ph.ip][i_ph.ipf].S
                          * spms.hfrag[i_ph.ih][i_ph.ihf].S;
+            // Backward going terms
             ph_t r_ph( i_ph.ih, i_ph.ip, -1, -1, Jp );
             JpTerm += Si_ph *
                 Gph( left, r_ph ) * Gph( r_ph, right ) /
                 ( E - ( spms.pfrag[ia][iaf].E - spms.hfrag[id][idf].E
                         + spms.pfrag[ i_ph.ip ][ i_ph.ipf ].E
-                        - spms.pfrag[ i_ph.ih ][ i_ph.ihf ].E ) );
+                        - spms.hfrag[ i_ph.ih ][ i_ph.ihf ].E ) );
         }
         result -= JpTerm * std::pow( -1.0, spms.j[ib] + spms.j[ic] + J + Jp )
                 * (  2 * Jp + 1 )
@@ -186,7 +186,7 @@ double screening_B_term( const ParticleHoleState &ph1,
                 Gph( left, i_ph ) * Gph( i_ph, right ) /
                 - ( spms.pfrag[id][idf].E - spms.hfrag[ib][ibf].E
                     + spms.pfrag[ i_ph.ip ][ i_ph.ipf ].E
-                    - spms.pfrag[ i_ph.ih ][ i_ph.ihf ].E );
+                    - spms.hfrag[ i_ph.ih ][ i_ph.ihf ].E );
         }
         BOOST_FOREACH(ph_t i_ph, phms[1 - tz][(parity+1)/2][Jp] ) {
             double Si_ph = spms.pfrag[i_ph.ip][i_ph.ipf].S
@@ -197,12 +197,12 @@ double screening_B_term( const ParticleHoleState &ph1,
                 Gph( left, r_ph ) * Gph( r_ph, right ) /
                 - ( spms.pfrag[ia][iaf].E - spms.hfrag[ic][icf].E
                     + spms.pfrag[ i_ph.ip ][ i_ph.ipf ].E
-                    - spms.pfrag[ i_ph.ih ][ i_ph.ihf ].E );
+                    - spms.hfrag[ i_ph.ih ][ i_ph.ihf ].E );
         }
         result -= JpTerm * std::pow( -1.0, spms.j[ib] + spms.j[ic] + J + Jp )
                 * (  2 * Jp + 1 )
-                * wigner6j( spms.j[ia], spms.j[ic], J,
-                            spms.j[id], spms.j[ib], Jp );
+                * wigner6j( spms.j[ia], spms.j[ib], J,
+                            spms.j[id], spms.j[ic], Jp );
     }
     return result;
 }

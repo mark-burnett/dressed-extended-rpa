@@ -221,9 +221,9 @@ build_ph_shells_from_sp( const SingleParticleModelspace &spms ) {
     return phms; }
 
 // --------------------------------------------------------------------
-// 2p factories used only by self-energy terms
+// Self energy modelspace factories
 // --------------------------------------------------------------------
-PPFromSPModelspace
+PPFromSP
 build_ppsp_modelspace_from_sp( const SingleParticleModelspace &spms ) {
     // Find maximum J
     int Jmax = -1;
@@ -233,10 +233,11 @@ build_ppsp_modelspace_from_sp( const SingleParticleModelspace &spms ) {
             if ( Jtemp > Jmax )
                 Jmax = Jtemp; } }
 
-    PPFromSPModelspace ppspms( Jmax + 1 ); ppspms.resize( Jmax + 1 );
+    PPFromSP ppspms( Jmax + 1 ); ppspms.resize( Jmax + 1 );
     for ( int J = 0; J <= Jmax; ++J ) {
         ppspms[J].resize( spms.size );
         for ( int ip1 = 0; ip1 < spms.size; ++ip1 ) {
+            ppspms[J][ip1].resize( spms.pfrag[ip1].size() );
             for ( int ip2 = 0; ip2 < spms.size; ++ip2 ) {
                 // Check for valid angular momenta
                 if ( !is_triangular(spms.j[ip1], spms.j[ip2], J) )
@@ -248,11 +249,11 @@ build_ppsp_modelspace_from_sp( const SingleParticleModelspace &spms ) {
                     for ( int ip2f = 0;
                             ip2f < static_cast<int>(spms.pfrag[ip2].size());
                             ++ip2f ) {
-                        ppspms[J][ip1].push_back( ParticleParticleState(
+                        ppspms[J][ip1][ip1f].push_back( ParticleParticleState(
                                     ip1, ip2, ip1f, ip2f, J ) ); } } } } }
     return ppspms; }
 
-PPFromSPModelspace
+PPFromSP
 build_hhsp_modelspace_from_sp( const SingleParticleModelspace &spms ) {
     // Find maximum J
     int Jmax = -1;
@@ -262,10 +263,11 @@ build_hhsp_modelspace_from_sp( const SingleParticleModelspace &spms ) {
             if ( Jtemp > Jmax )
                 Jmax = Jtemp; } }
 
-    PPFromSPModelspace hhspms( Jmax + 1 ); hhspms.resize( Jmax + 1 );
+    PPFromSP hhspms( Jmax + 1 ); hhspms.resize( Jmax + 1 );
     for ( int J = 0; J <= Jmax; ++J ) {
         hhspms[J].resize( spms.size );
         for ( int ip1 = 0; ip1 < spms.size; ++ip1 ) {
+            hhspms[J][ip1].resize( spms.hfrag[ip1].size() );
             for ( int ip2 = 0; ip2 < spms.size; ++ip2 ) {
                 // Check for valid angular momenta
                 if ( !is_triangular(spms.j[ip1], spms.j[ip2], J) )
@@ -277,6 +279,76 @@ build_hhsp_modelspace_from_sp( const SingleParticleModelspace &spms ) {
                     for ( int ip2f = 0;
                             ip2f < static_cast<int>(spms.hfrag[ip2].size());
                             ++ip2f ) {
-                        hhspms[J][ip1].push_back( ParticleParticleState(
+                        hhspms[J][ip1][ip1f].push_back( ParticleParticleState(
                                     ip1, ip2, ip1f, ip2f, J ) ); } } } } }
     return hhspms; }
+
+PPFromSP
+build_phsp_modelspace_from_sp( const SingleParticleModelspace &spms ) {
+    // Find maximum J
+    int Jmax = -1;
+    for ( int tz = -1; tz <= 1; ++tz ) {
+        for ( int parity = -1; parity <= 1; parity += 2 ) {
+            int Jtemp = get_max_ph_J( spms, tz, parity );
+            if ( Jtemp > Jmax )
+                Jmax = Jtemp; } }
+
+    PPFromSP phspms( Jmax + 1 ); phspms.resize( Jmax + 1 );
+    for ( int J = 0; J <= Jmax; ++J ) {
+        phspms[J].resize( spms.size );
+        for ( int ip1 = 0; ip1 < spms.size; ++ip1 ) {
+            phspms[J][ip1].resize( spms.pfrag[ip1].size() );
+            for ( int ip2 = 0; ip2 < spms.size; ++ip2 ) {
+                // Check for valid angular momenta
+                if ( !is_triangular(spms.j[ip1], spms.j[ip2], J) )
+                    continue;
+                // Loop over fragments
+                for ( int ip1f = 0;
+                        ip1f < static_cast<int>(spms.pfrag[ip1].size());
+                        ++ip1f ) {
+                    for ( int ip2f = 0;
+                            ip2f < static_cast<int>(spms.hfrag[ip2].size());
+                            ++ip2f ) {
+                        phspms[J][ip1][ip1f].push_back( ParticleParticleState(
+                                    ip1, ip2, ip1f, ip2f, J ) ); } } } } }
+    return phspms; }
+
+PPFromSP
+build_hpsp_modelspace_from_sp( const SingleParticleModelspace &spms ) {
+    // Find maximum J
+    int Jmax = -1;
+    for ( int tz = -1; tz <= 1; ++tz ) {
+        for ( int parity = -1; parity <= 1; parity += 2 ) {
+            int Jtemp = get_max_ph_J( spms, tz, parity );
+            if ( Jtemp > Jmax )
+                Jmax = Jtemp; } }
+
+    PPFromSP hpspms( Jmax + 1 ); hpspms.resize( Jmax + 1 );
+    for ( int J = 0; J <= Jmax; ++J ) {
+        hpspms[J].resize( spms.size );
+        for ( int ip1 = 0; ip1 < spms.size; ++ip1 ) {
+            hpspms[J][ip1].resize( spms.hfrag[ip1].size() );
+            for ( int ip2 = 0; ip2 < spms.size; ++ip2 ) {
+                // Check for valid angular momenta
+                if ( !is_triangular(spms.j[ip1], spms.j[ip2], J) )
+                    continue;
+                // Loop over fragments
+                for ( int ip1f = 0;
+                        ip1f < static_cast<int>(spms.hfrag[ip1].size());
+                        ++ip1f ) {
+                    for ( int ip2f = 0;
+                            ip2f < static_cast<int>(spms.pfrag[ip2].size());
+                            ++ip2f ) {
+                        hpspms[J][ip1][ip1f].push_back( ParticleParticleState(
+                                    ip1, ip2, ip1f, ip2f, J ) ); } } } } }
+    return hpspms; }
+
+SEModelspace
+build_se_modelspace_from_sp( const SingleParticleModelspace &spms ) {
+    SEModelspace sems;
+    sems.pp = build_ppsp_modelspace_from_sp( spms );
+    sems.hh = build_hhsp_modelspace_from_sp( spms );
+    sems.ph = build_phsp_modelspace_from_sp( spms );
+    sems.hp = build_hpsp_modelspace_from_sp( spms );
+    return sems;
+}
