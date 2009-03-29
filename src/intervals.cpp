@@ -1,4 +1,3 @@
-//#include <iostream>
 #include <cassert>
 #include <vector>
 #include <algorithm>
@@ -6,6 +5,9 @@
 #include <boost/numeric/conversion/cast.hpp>
 
 #include "intervals.h"
+
+bool intervals_equal( const interval_t &a, const interval_t &b ) {
+    return a.upper() == b.upper() && a.lower() == b.lower(); }
 
 // Builds solution intervals by interleaving elements of A and B.
 // Both vectors must be sorted, and A[i] < B[i].

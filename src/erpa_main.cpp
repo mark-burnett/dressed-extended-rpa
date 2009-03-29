@@ -98,7 +98,7 @@ int main( int argc, char *argv[] ) {
 
     int tz     =  0;
     int parity =  1;
-    int J      =  0;
+    int J      =  2;
 
     // loop/build matricies
     std::cout << "Constructing static part of matrix for tz = " << tz
@@ -111,7 +111,7 @@ int main( int argc, char *argv[] ) {
             dynamic_terms, spms, ph_states, J, parity, tz );
     // Asymptotes
     std::vector< double > asymptotes
-        = get_erpa_asymptotes( tz, parity, J, phms, spms );
+        = get_erpa_asymptotes( phms, spms );
 
     std::cout << "Performing self-consistent eigenvalue calculation."
         << std::endl;

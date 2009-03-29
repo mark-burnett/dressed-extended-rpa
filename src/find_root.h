@@ -7,7 +7,7 @@ namespace util {
 
 double false_position( const boost::function< double (double) > &f,
                        double left_limit, double right_limit,
-                       double precision=0.01, int max_iter=20 );
+                       double precision=0.001, int max_iter=20 );
 
 } // end namespace util
 

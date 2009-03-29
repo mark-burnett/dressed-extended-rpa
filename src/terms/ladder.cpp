@@ -110,7 +110,7 @@ double ladder_A_term( const ParticleHoleState &ph1,
         pp_t right( ic, ib, -1, -1, Jp );
         double JpTerm = 0;
         // Intermediate terms above Fermi surface
-        assert( 0 != ppms[1 + tz][(parity+1)/2][Jp].size() );
+//        assert( 0 != ppms[1 + tz][(parity+1)/2][Jp].size() );
         BOOST_FOREACH(pp_t i_pp, ppms[1 + tz][(parity+1)/2][Jp]) {
             assert( parity == spms.parity[i_pp.ip1]*spms.parity[i_pp.ip2] );
             double Si_pp = spms.pfrag[i_pp.ip1][i_pp.ip1f].S
@@ -121,7 +121,7 @@ double ladder_A_term( const ParticleHoleState &ph1,
                         + spms.pfrag[i_pp.ip2][i_pp.ip2f].E ) );
         }
         // Intermediate terms below Fermi surface
-        assert( 0 != hhms[1 + tz][(parity+1)/2][Jp].size() );
+//        assert( 0 != hhms[1 + tz][(parity+1)/2][Jp].size() );
         BOOST_FOREACH(pp_t i_hh, hhms[1 + tz][(parity+1)/2][Jp]) {
             assert( parity == spms.parity[i_hh.ip1]*spms.parity[i_hh.ip2] );
             double Si_hh = spms.hfrag[i_hh.ip1][i_hh.ip1f].S

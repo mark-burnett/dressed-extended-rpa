@@ -6,6 +6,8 @@
 
 typedef boost::numeric::interval< double > interval_t;
 
+bool intervals_equal( const interval_t &a, const interval_t &b );
+
 std::vector< interval_t >
 build_root_intervals( const std::vector< double > &A,
                       const std::vector< double > &B );

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <set>
 #include <boost/numeric/conversion/cast.hpp>
 #include "Modelspace.h"
 
@@ -54,28 +55,35 @@ double ph_energy( const ParticleHoleState &ph,
     return spms.pfrag[ph.ip][ph.ipf].E - spms.hfrag[ph.ih][ph.ihf].E; }
 
 // Returns the (sorted) poles of a particle hole modelspace
-std::vector< double > get_ph_poles( int tz, int parity, int J,
+std::vector< double > get_ph_poles( //int tz, int parity, int J,
                                     const ParticleHoleModelspace &phms,
                                     const SingleParticleModelspace &spms ) {
-    const std::vector< ParticleHoleState > &ph_states
-        = phms[tz+1][(parity+1)/2][J];
+    std::set< double > poles;
+    for ( int tz = -1; tz <= 1; ++tz ) {
+        for ( int parity = -1; parity <= 1; parity += 2 ) {
+            for ( int J = 0;
+                    J<boost::numeric_cast<int>(phms[tz+1][(parity+1)/2].size());
+                    ++J ) {
+                const std::vector< ParticleHoleState > &ph_states
+                    = phms[tz+1][(parity+1)/2][J];
 
-    std::vector< double > poles;
-    for ( int i = 0; i < boost::numeric_cast<int>(ph_states.size()); ++i ) {
-        poles.push_back( ph_energy( ph_states[i], spms ) ); }
+                for ( int i = 0; i < boost::numeric_cast<int>(ph_states.size());
+                        ++i ) {
+                    poles.insert( ph_energy( ph_states[i], spms ) ); } } } }
 
-    std::sort( poles.begin(), poles.end() );
+//    std::sort( poles.begin(), poles.end() );
 
-    return poles; }
+    return std::vector< double >( poles.begin(), poles.end() ); }
 
-std::vector< double > get_erpa_asymptotes( int tz, int parity, int J,
+std::vector< double > get_erpa_asymptotes( //int tz, int parity, int J,
                                 const ParticleHoleModelspace &phms,
                                 const SingleParticleModelspace &spms ) {
-    std::vector< double > ph_poles = get_ph_poles( tz, parity, J, phms, spms );
+    std::vector< double > ph_poles = get_ph_poles( phms, spms );
     std::vector< double > result;
     for ( int i = 0; i < boost::numeric_cast<int>(ph_poles.size()); ++i ) {
-        for ( int j = 0; j < boost::numeric_cast<int>(ph_poles.size()); ++j ) {
+        for ( int j = i; j < boost::numeric_cast<int>(ph_poles.size()); ++j ) {
             result.push_back( ph_poles[i] + ph_poles[j] ); } }
+    std::sort( result.begin(), result.end() );
     return result; }
 
 void print_ph_modelspace_sizes( std::ostream &o,

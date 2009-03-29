@@ -127,11 +127,11 @@ int get_max_ph_J(   const SingleParticleModelspace &spms, int tz, int parity );
 double ph_energy( const ParticleHoleState &ph,
                   const SingleParticleModelspace &spms );
 
-std::vector< double > get_ph_poles( int tz, int parity, int J,
+std::vector< double > get_ph_poles( //int tz, int parity, int J,
                                     const ParticleHoleModelspace &phms,
                                     const SingleParticleModelspace &spms );
 
-std::vector< double > get_erpa_asymptotes( int tz, int parity, int J,
+std::vector< double > get_erpa_asymptotes( //int tz, int parity, int J,
                                 const ParticleHoleModelspace &phms,
                                 const SingleParticleModelspace &spms );
 // IO Functions

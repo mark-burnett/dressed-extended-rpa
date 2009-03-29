@@ -1,6 +1,5 @@
 #ifndef _SEARCH_H_
-#define _SEARCH_H_
-
+#define _SEARCH_H_ 
 #include <vector>
 #include <boost/tuple/tuple.hpp>
 
@@ -16,5 +15,5 @@ std::vector< double >
 solve_derpa_eigenvalues( double Emax,
                          const MatrixFactory &mf,
                          const std::vector< double > &asymptotes,
-                         double epsilon = 0.01 );
+                         double epsilon = 0.001 );
 #endif // _SEARCH_H_
