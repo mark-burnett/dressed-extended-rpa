@@ -38,169 +38,63 @@ int get_num_solutions( const std::vector< double > &left_vals,  double left,
 
     return num_solutions; }
 
-std::vector< interval_t >
-make_root_intervals( const std::vector< double > &left_vals,  double left,
-                     const std::vector< double > &right_vals, double right,
-                     const interval_t &region, int num_solutions ) {
-    boost::tuple< int, int > ab_left  = split_values( left_vals,  left );
-    boost::tuple< int, int > ab_right = split_values( right_vals, right );
+double base_root_function( double E, const MatrixFactory &mf, int index ) {
+    std::vector< double > vals = util::sorted_eigenvalues( mf.build(E) );
+    return vals[index] - E; }
 
-    std::vector< double > lower_bounds( num_solutions ),
-                          upper_bounds( num_solutions );
-    for ( int i = 0; i < num_solutions; ++i ) {
-        double lval = right_vals[ ab_right.get<1>() - num_solutions + i ];
-        double uval = left_vals [i + ab_left.get<1>()];
-//        std::cout << lval << ", " << uval << std::endl;
-        lower_bounds[i] = std::max( lval, region.lower() );
-        upper_bounds[i] = std::min( uval, region.upper() ); }
-    return build_root_intervals( lower_bounds, upper_bounds); }
-
-double base_root_function( double E, const MatrixFactory &mf ) {
-    util::matrix_t m = mf.build(E);
-    m -= E * ublas::identity_matrix< double >( m.size1() );
-    return determinant( m ); }
+double root_find_solution( const MatrixFactory &mf, const interval_t &region,
+                           const std::vector< double > lower_vals,
+                           const std::vector< double > upper_vals ) {
+    int index = std::upper_bound( lower_vals.begin(), lower_vals.end(),
+            region.lower() ) - lower_vals.begin();
+    double flower = lower_vals[index] - region.lower();
+    double fupper = upper_vals[index] - region.upper();
+    return util::false_position(
+            boost::bind( base_root_function, _1, boost::cref(mf),
+                index ),
+            region.lower(), region.upper(), flower, fupper ); }
 
 // This is the main search algorithm for the (D)ERPA.
-// Here is a rough outline of the algorithm:
-// Evaluate the eigenvalue problem at the boundaries of the region.
-// From those eigenvalues,
-//      determine the number of solutions in the region.
-//      construct root intervals containing each solution
-// Using those root intervals,
-//      construct sub intervals
-//      determine probabilities for the sub intervals
-// Check the sub intervals most likely to contain a solution (recursively)
 std::vector< double >
-solve_region( const MatrixFactory &mf, const interval_t &region ) {
-    // If the region is a singleton, leave.
-    if ( boost::numeric::singleton( region ) ) {
-        std::cout << "region is singleton.  " << region << std::endl;
-        return std::vector< double >();
-    }
-    // Find eigenvalues at left and right boundaries.
-    std::vector< double > lower_vals
-        = util::sorted_eigenvalues( mf.build( region.lower() ) );
-    std::vector< double > upper_vals
-        = util::sorted_eigenvalues( mf.build( region.upper() ) );
-
-    // Get basic information about the region.
+solve_region( const MatrixFactory &mf, const interval_t &region,
+              const std::vector< double > lower_vals,
+              const std::vector< double > upper_vals ) {
+    // Determine # solutions
     int num_solutions = get_num_solutions( lower_vals, region.lower(),
                                            upper_vals, region.upper() );
-    std::cout << "(" << region.lower() << ", " << region.upper() << ") -> "
-        << num_solutions << std::endl;
+    std::cout << region << " -> " << num_solutions << std::endl;
+    // If no solutions, return empty.
+    if ( 0 == num_solutions ) {
+        std::cout << "   Empty return." << std::endl;
+        return std::vector< double >(); }
 
-    // Return an empty vector if there are no solutions in the region:
-    if ( 0 == num_solutions )
-        return std::vector< double >();
+    // If the interval has no width, but has solutions, return the value.
+    if ( std::abs( region.upper() - region.lower() ) < 0.000000001 ) {
+        std::cout << "   Singleton return: " << region.lower() << std::endl;
+        return std::vector< double >( 1, region.lower() ); }
 
-    // Generate the root intervals
-    std::vector< interval_t > root_intervals
-        = make_root_intervals( lower_vals, region.lower(),
-                               upper_vals, region.upper(),
-                               region, num_solutions );
-
-    // Return the answer if there is only one solution in the region.
-    // NOTE: We generated the root intervals first, because the root interval
-    // is guaranteed to no larger than the region size.
-    // This may not be optimal, since we could provide the root finding
-    // algorithm with the y-values at both ends.
+    // If 1 solution, root_find.
     if ( 1 == num_solutions ) {
-        boost::function< double(double) > f = boost::bind( base_root_function,
-                _1, boost::cref(mf) );
-        std::vector< double > result( 1,
-                util::false_position( f, root_intervals[0].lower(),
-                                         root_intervals[0].upper() ) );
-        std::cout << "solution found: " << result[0] << std::endl;
-        return result; }
+        std::cout << "   Root finding... ";
+        std::vector< double > temp( 1,
+                root_find_solution( mf, region, lower_vals, upper_vals ) );
+        std::cout << temp[0] << std::endl;
+        return temp;
+    }
 
-    // Loop until we get have a solution for every root interval
-    std::vector< double > solutions;
-    // We are going to modify root_intervals in the loop, so let's save the size
-    for ( int i = 0; i < num_solutions; ++i ) {
-        // We have already found all the solutions.
-        if ( 0 == root_intervals.size() )
-            break;
-        // Generate the sub intervals and the associated probabilities
-        std::vector< interval_t > sub_intervals
-            = get_sub_intervals( root_intervals );
-        std::vector< double > prob
-            = get_sub_interval_probabilities( root_intervals, sub_intervals );
-        // Go through the sub intervals
-        for ( int s = 0; s < boost::numeric_cast<int>(sub_intervals.size());
-                ++s ) {
-            // Locate the sub interval most likely to have a solution.
-            int imax = std::max_element( prob.begin(), prob.end() )
-                     - prob.begin();
-            // Don't bother looking if there is nothing there
-            assert( 0 != prob[imax] );
-            // Search that location
-            std::vector< double > sub_results;
-            // Check for the case that we could not narrow down the
-            // root finding interval.
-            bool bisected = false;
-            if ( boost::numeric::equal( sub_intervals[imax], region ) ) {
-                bisected = true;
-                double lower  = sub_intervals[imax].lower();
-                double upper  = sub_intervals[imax].upper();
-                double center = ( lower + upper ) / 2;
-                std::cout << "Bisecting (" << lower << ", " << center
-                    << ", " << upper << ")." << std::endl;
-                sub_results = solve_region( mf, interval_t( lower, center ) );
-                if ( 0 == sub_results.size() )
-                    sub_results = solve_region( mf, interval_t( center, upper));
-            } else {
-                std::cout << "Solving normally: ("
-                    << sub_intervals[imax].lower() << ", "
-                    << sub_intervals[imax].upper() << ")" << std::endl;
-                sub_results = solve_region( mf, sub_intervals[imax] );
-            }
-            // If no solution was found, set the probability to 0 and move on.
-            if ( 0 == sub_results.size() )
-                prob[imax] = 0;
-            else {
-//                if ( root_intervals.size() < sub_results.size() ) {
-//                    if ( bisected )
-//                        std::cout << "we bisected." << std::endl;
-//                    std::cout << i << "/" << num_solutions <<  " "
-//                        << sub_results.size() << std::endl;
-//                }
-                assert( root_intervals.size() >= sub_results.size() );
-                if ( sub_results.size() > 1 ) {
-                    for ( int sr = 0;
-                            sr < boost::numeric_cast<int>(sub_results.size());
-                            ++sr ) {
-                        std::cout << "SR: " <<sub_results[sr] << std::endl;
-                    }
-                }
-                // loop over sub results
-                for ( int sr = 0;
-                        sr < boost::numeric_cast<int>(sub_results.size());
-                        ++sr ) {
-                    // add the solution to our solution set.
-                    double solution = sub_results[sr];
-                    solutions.push_back( solution );
-//                    std::cout << "solution found: " << sub_results[sr]
-//                        << std::endl;
-                    // identify root interval it belongs to
-                    double epsilon = 0.000001;
-                    int root_position
-                        = get_num_solutions( lower_vals, region.lower(),
-                           util::sorted_eigenvalues(mf.build(solution
-                                   - epsilon)),
-                           solution - epsilon);
-                    std::cout << "rp = " << root_position << std::endl;
-                    // delete that root interval
-                    assert( 0 != root_intervals.size() );
-                    // FIXME don't erase, replace with a tiny interval
-                    root_intervals[root_position]
-                        = interval_t( solution ); } //, solution ); }
-//                    root_intervals.erase( root_intervals.begin()
-//                                        + root_position ); }
-                // end this loop (go back to top loop)
-                break; } } }
-    // If these conditions are not met, we have missed a solution
-    assert( num_solutions == boost::numeric_cast<int>(solutions.size()) );
-//    assert( root_intervals.empty() );
+    // If > 1 solution, sub-divide region.
+    double center = boost::numeric::median( region );
+    std::cout << "   Bisecting @ " << center << std::endl;
+    std::vector< double > center_vals
+        = util::sorted_eigenvalues( mf.build( center ) );
+    std::vector< double > solutions
+        = solve_region( mf, interval_t( region.lower(), center ),
+                        lower_vals, center_vals );
+    { std::vector< double > upper_solutions
+        = solve_region( mf, interval_t( center, region.upper() ),
+                        center_vals, upper_vals );
+        solutions.insert( solutions.end(), upper_solutions.begin(),
+                upper_solutions.end() ); }
     return solutions; }
 
 // Finds all (D)ERPA solutions up to the next asymptote above Emax.
@@ -217,9 +111,14 @@ solve_derpa_eigenvalues( double Emax,
         // All done.
         if ( lower > Emax )
             break;
-        std::cout << "   (" << region.lower() << ", " << region.upper() << ")"
-            << std::endl;
-        std::vector< double > region_results = solve_region( mf, region );
+        // Evaluate eigenvalues at upper and lower limits.
+        std::vector< double > lower_vals
+            = util::sorted_eigenvalues( mf.build( region.lower() ) );
+        std::vector< double > upper_vals
+            = util::sorted_eigenvalues( mf.build( region.upper() ) );
+        // Solve inside region
+        std::vector< double > region_results = solve_region( mf, region,
+                lower_vals, upper_vals );
         results.insert( results.end(), region_results.begin(),
                                        region_results.end() );
         lower = asymptotes[a]; }

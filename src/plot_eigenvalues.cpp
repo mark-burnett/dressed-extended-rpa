@@ -20,7 +20,6 @@
 #include "ph_interaction_factories.h"
 #include "pp_interaction_factories.h"
 #include "term_factories.h"
-#include "search.h"
 
 namespace po = boost::program_options;
 
@@ -98,7 +97,9 @@ int main( int argc, char *argv[] ) {
 
     int tz     =  0;
     int parity = -1;
-    int J      =  1;
+    int J      =  3;
+//    int amax   =  2;
+    double dE  =  0.05;
 
     // loop/build matricies
     std::cout << "Constructing static part of matrix for tz = " << tz
@@ -112,23 +113,28 @@ int main( int argc, char *argv[] ) {
     // Asymptotes
     std::vector< double > asymptotes
         = get_erpa_asymptotes( phms, spms );
+//    BOOST_FOREACH( double a, asymptotes ) {
+//        std::cout << a << std::endl; }
 
-    std::cout << "Performing self-consistent eigenvalue calculation."
-        << std::endl;
-    std::vector< double > vals
-        = solve_derpa_eigenvalues( 10, mf, asymptotes );
-
-//    util::cvector_t vals = util::eigenvalues( rpa_matrix );
-    std::cout << "Calculation complete." << std::endl;
+    std::cout << "Generating eigenvalue plot data." << std::endl;
 
     std::ofstream outfile(
             config_vm["output_file"].as<std::string>().c_str() );
-    outfile << vals.size() << std::endl;
-    BOOST_FOREACH( double v, vals ) { 
-        outfile << v << " ";
-    }
-    outfile << std::endl;
-//    outfile << vals << std::endl;
+    double E = 0;
+//    for ( int a = 0; a < amax; ++a ) {
+        while ( E < 7 ) { //asymptotes[a] + 2*dE ) {
+            std::vector< double > vals
+                = util::sorted_eigenvalues( mf.build( E ) );
+            outfile << E << " ";
+            BOOST_FOREACH( double v, vals ) { 
+                outfile << v << " ";
+            }
+            outfile << std::endl;
+            E += dE; }
+        outfile << std::endl;
+//    }
+
+    std::cout << "Calculation complete." << std::endl;
 
     return 0;
 }

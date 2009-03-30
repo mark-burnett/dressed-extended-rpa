@@ -5,6 +5,7 @@
 #include "Modelspace.h"
 #include "modelspace_factories.h"
 
+/*
 TEST( Modelspace, Poles ) {
     // Build the modelspaces
     SingleParticleModelspace spms =
@@ -20,3 +21,4 @@ TEST( Modelspace, Poles ) {
     EXPECT_FLOAT_EQ( 42.117380, poles[2] );
     EXPECT_FLOAT_EQ( 42.420139, poles[3] );
 }
+*/

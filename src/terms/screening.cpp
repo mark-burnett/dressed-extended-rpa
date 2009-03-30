@@ -108,6 +108,7 @@ double screening_A_term( const ParticleHoleState &ph1,
         ph_t left(  ia, ic, -1, -1, Jp );
         ph_t right( ib, id, -1, -1, Jp );
         double JpTerm = 0;
+//        assert( 0 != phms[1 + tz][(parity+1)/2][Jp].size() );
         BOOST_FOREACH(ph_t i_ph, phms[1 + tz][(parity+1)/2][Jp]) {
             double Si_ph = spms.pfrag[i_ph.ip][i_ph.ipf].S
                          * spms.hfrag[i_ph.ih][i_ph.ihf].S;
@@ -118,6 +119,7 @@ double screening_A_term( const ParticleHoleState &ph1,
                         + spms.pfrag[ i_ph.ip ][ i_ph.ipf ].E
                         - spms.hfrag[ i_ph.ih ][ i_ph.ihf ].E ) );
         }
+//        assert( 0 != phms[1 - tz][(parity+1)/2][Jp].size() );
         BOOST_FOREACH(ph_t i_ph, phms[1 - tz][(parity+1)/2][Jp] ) {
             double Si_ph = spms.pfrag[i_ph.ip][i_ph.ipf].S
                          * spms.hfrag[i_ph.ih][i_ph.ihf].S;

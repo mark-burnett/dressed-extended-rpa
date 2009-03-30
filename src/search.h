@@ -15,5 +15,5 @@ std::vector< double >
 solve_derpa_eigenvalues( double Emax,
                          const MatrixFactory &mf,
                          const std::vector< double > &asymptotes,
-                         double epsilon = 0.001 );
+                         double epsilon = 0.00001 );
 #endif // _SEARCH_H_
