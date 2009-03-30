@@ -112,7 +112,7 @@ int main( int argc, char *argv[] ) {
             dynamic_terms, spms, ph_states, J, parity, tz );
     // Asymptotes
     std::vector< double > asymptotes
-        = get_erpa_asymptotes( phms, spms );
+        = get_erpa_asymptotes( tz, parity, J, ppms, hhms, spms );
 //    BOOST_FOREACH( double a, asymptotes ) {
 //        std::cout << a << std::endl; }
 

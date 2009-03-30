@@ -1,6 +1,8 @@
+#include <cassert>
 #include <iostream>
 #include <set>
 #include <boost/numeric/conversion/cast.hpp>
+#include <boost/foreach.hpp>
 #include "Modelspace.h"
 
 // --------------------------------------------------------------------
@@ -45,46 +47,57 @@ void print_sp_state( std::ostream &o, int i,
 // --------------------------------------------------------------------
 // PP Modelspace helpers
 // --------------------------------------------------------------------
+double pp_energy( const ParticleParticleState &pp,
+                  const SingleParticleModelspace &spms ) {
+    return spms.pfrag[pp.ip1][pp.ip1f].E + spms.pfrag[pp.ip2][pp.ip2f].E; }
+
+double hh_energy( const ParticleParticleState &pp,
+                  const SingleParticleModelspace &spms ) {
+    return spms.hfrag[pp.ip1][pp.ip1f].E + spms.hfrag[pp.ip2][pp.ip2f].E; }
+
+int parity( const ParticleParticleState &pp,
+            const SingleParticleModelspace &spms ) {
+    return spms.parity[pp.ip1] * spms.parity[pp.ip2]; }
 
 // --------------------------------------------------------------------
 // PH Modelspace helpers
 // --------------------------------------------------------------------
 // Returns the energy of a particle hole state (fragment)
-double ph_energy( const ParticleHoleState &ph,
-                  const SingleParticleModelspace &spms ) {
+double energy( const ParticleHoleState &ph,
+               const SingleParticleModelspace &spms ) {
     return spms.pfrag[ph.ip][ph.ipf].E - spms.hfrag[ph.ih][ph.ihf].E; }
 
-// Returns the (sorted) poles of a particle hole modelspace
-std::vector< double > get_ph_poles( //int tz, int parity, int J,
-                                    const ParticleHoleModelspace &phms,
-                                    const SingleParticleModelspace &spms ) {
-    std::set< double > poles;
-    for ( int tz = -1; tz <= 1; ++tz ) {
-        for ( int parity = -1; parity <= 1; parity += 2 ) {
-            for ( int J = 0;
-                    J<boost::numeric_cast<int>(phms[tz+1][(parity+1)/2].size());
-                    ++J ) {
-                const std::vector< ParticleHoleState > &ph_states
-                    = phms[tz+1][(parity+1)/2][J];
+int parity( const ParticleHoleState &ph,
+            const SingleParticleModelspace &spms ) {
+    return spms.parity[ph.ip] * spms.parity[ph.ih]; }
 
-                for ( int i = 0; i < boost::numeric_cast<int>(ph_states.size());
-                        ++i ) {
-                    poles.insert( ph_energy( ph_states[i], spms ) ); } } } }
-
-//    std::sort( poles.begin(), poles.end() );
-
-    return std::vector< double >( poles.begin(), poles.end() ); }
-
-std::vector< double > get_erpa_asymptotes( //int tz, int parity, int J,
-                                const ParticleHoleModelspace &phms,
+std::vector< double > get_erpa_asymptotes( int tz, int parity, int J,
+                                const ParticleParticleModelspace &ppms,
+                                const ParticleParticleModelspace &hhms,
                                 const SingleParticleModelspace &spms ) {
-    std::vector< double > ph_poles = get_ph_poles( phms, spms );
-    std::vector< double > result;
-    for ( int i = 0; i < boost::numeric_cast<int>(ph_poles.size()); ++i ) {
-        for ( int j = i; j < boost::numeric_cast<int>(ph_poles.size()); ++j ) {
-            result.push_back( ph_poles[i] + ph_poles[j] ); } }
-    std::sort( result.begin(), result.end() );
-    return result; }
+    std::set< double > result;
+    for ( int pptz = -1; pptz <= 1; ++pptz ) {
+        int hhtz = pptz - tz;
+        for ( int ppparity = -1; ppparity <= 1; ppparity += 2 ) {
+            int hhparity = parity * ppparity;
+            int ppJmax = ppms[pptz+1][(ppparity+1)/2].size() - 1;
+            for ( int ppJ = 0; ppJ <= ppJmax; ++ppJ ) {
+                const std::vector< ParticleParticleState > &pp_states
+                    = ppms[1+pptz][(ppparity+1)/2][ppJ];
+                int hhJabsmax = boost::numeric_cast<int>(
+                           hhms[1+hhtz][(hhparity+1)/2].size() - 1);
+                int hhJmin = std::min( std::abs( ppJ - J ), hhJabsmax );
+                int hhJmax = std::min( ppJ + J, hhJabsmax );
+                for ( int hhJ = hhJmin; hhJ <= hhJmax; ++hhJ ) {
+                    const std::vector< ParticleParticleState > &hh_states
+                        = hhms[1+hhtz][(hhparity+1)/2][hhJ];
+                    BOOST_FOREACH( const ParticleParticleState &pp,
+                            pp_states ) {
+                        BOOST_FOREACH( const ParticleParticleState &hh,
+                                hh_states ) {
+                            result.insert( pp_energy(pp, spms)
+                                         - hh_energy(hh, spms) ); } } } } } }
+    return std::vector< double >( result.begin(), result.end() ); }
 
 void print_ph_modelspace_sizes( std::ostream &o,
                                 const ParticleHoleModelspace &phms ) {

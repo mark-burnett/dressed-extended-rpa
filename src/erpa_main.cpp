@@ -4,6 +4,7 @@
 
 #include <boost/foreach.hpp>
 #include <boost/numeric/ublas/io.hpp>
+#include <boost/numeric/conversion/cast.hpp>
 
 #include <boost/program_options/variables_map.hpp>
 #include <boost/program_options/options_description.hpp>
@@ -80,7 +81,7 @@ int main( int argc, char *argv[] ) {
     ParticleParticleModelspace hhms = build_hh_modelspace_from_sp( spms );
     SEModelspace               sems = build_se_modelspace_from_sp( spms );
 
-    std::cout << "Modelspaces built.  PH modelspace sizes:" << std::endl;
+    std::cout << "Modelspaces built." << std::endl;
     print_ph_modelspace_sizes( std::cout, 0, phms );
 
     // Particle-hole interaction
@@ -97,38 +98,36 @@ int main( int argc, char *argv[] ) {
         = build_dynamic_erpa_terms( Gph, Gpp, phms, ppms, hhms, sems, spms );
 
     int tz     =  0;
-    int parity = -1;
-    int J      =  1;
-
-    // loop/build matricies
-    std::cout << "Constructing static part of matrix for tz = " << tz
-        << ", J = " << J << ", parity = " << parity << std::endl;
-    // Matrix Factory
-    const std::vector< ParticleHoleState > &ph_states =
-                phms[tz + 1][(parity+1)/2][J];
-    MatrixFactory mf(
-            build_static_erpa_matrix( static_terms, dynamic_terms, ph_states ),
-            dynamic_terms, spms, ph_states, J, parity, tz );
-    // Asymptotes
-    std::vector< double > asymptotes
-        = get_erpa_asymptotes( phms, spms );
-
-    std::cout << "Performing self-consistent eigenvalue calculation."
-        << std::endl;
-    std::vector< double > vals
-        = solve_derpa_eigenvalues( 10, mf, asymptotes );
-
-//    util::cvector_t vals = util::eigenvalues( rpa_matrix );
-    std::cout << "Calculation complete." << std::endl;
 
     std::ofstream outfile(
             config_vm["output_file"].as<std::string>().c_str() );
-    outfile << vals.size() << std::endl;
-    BOOST_FOREACH( double v, vals ) { 
-        outfile << v << " ";
-    }
-    outfile << std::endl;
-//    outfile << vals << std::endl;
+    for ( int parity = -1; parity <= 1; parity += 2 ) {
+        for ( int J = 0;
+                J <= boost::numeric_cast<int>(get_max_ph_J( spms, tz, parity ));
+                ++J ) {
+            // Matrix Factory
+            const std::vector< ParticleHoleState > &ph_states =
+                        phms[tz + 1][(parity+1)/2][J];
+            std::cout << "Building static part of matrix for tz = " << tz
+                << ", J = " << J << ", parity = " << parity
+                << " with " << ph_states.size() << " states." << std::endl;
+            MatrixFactory mf(
+                    build_static_erpa_matrix( static_terms, dynamic_terms,
+                        ph_states ),
+                    dynamic_terms, spms, ph_states, J, parity, tz );
+            std::cout << "Performing self-consistent eigenvalue calculation."
+                << std::endl;
+            // Asymptotes
+            std::vector< double > asymptotes
+                = get_erpa_asymptotes( tz, parity, J, ppms, hhms, spms );
 
-    return 0;
-}
+            std::vector< double > vals
+                = solve_derpa_eigenvalues( 10, mf, asymptotes );
+
+            std::cout << "Calculation complete." << std::endl;
+
+            outfile << "(" << J << ", " << parity << ", " << tz << ")\n";
+            BOOST_FOREACH( double v, vals ) { 
+                outfile << v << " "; }
+            outfile << "\n" << std::endl; } }
+    return 0; }

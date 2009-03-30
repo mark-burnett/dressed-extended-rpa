@@ -82,7 +82,7 @@ double SE_particle_line( const ParticleHoleState &ph, double E,
         double JpTerm = 0;
         // make list of outter left side states
         // loop over outter left states
-        assert( 0 != sems.ph[Jp][ia][iaf].size() );
+//        assert( 0 != sems.ph[Jp][ia][iaf].size() );
         BOOST_FOREACH( pp_t left, sems.ph[Jp][ia][iaf] ) {
         //      make list of inner right side states
         //      loop over inner right side states

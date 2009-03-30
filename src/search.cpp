@@ -33,11 +33,12 @@ int get_num_solutions( const std::vector< double > &left_vals,  double left,
     boost::tuple< int, int > ab_left  = split_values( left_vals,  left );
     boost::tuple< int, int > ab_right = split_values( right_vals, right );
 
-    int     num_solutions =  std::abs( ab_right.get<0>() - ab_left.get<0>() );
-    assert( num_solutions == std::abs( ab_left.get<1>()  - ab_right.get<1>() ));
+    int     num_solutions =  ab_right.get<1>() - ab_left.get<1>();
+    assert( num_solutions == ab_left.get<0>()  - ab_right.get<0>() );
 
     return num_solutions; }
 
+// Root finding functions
 double base_root_function( double E, const MatrixFactory &mf, int index ) {
     std::vector< double > vals = util::sorted_eigenvalues( mf.build(E) );
     return vals[index] - E; }
@@ -62,29 +63,29 @@ solve_region( const MatrixFactory &mf, const interval_t &region,
     // Determine # solutions
     int num_solutions = get_num_solutions( lower_vals, region.lower(),
                                            upper_vals, region.upper() );
-    std::cout << region << " -> " << num_solutions << std::endl;
+//    std::cout << region << " -> " << num_solutions << std::endl;
     // If no solutions, return empty.
     if ( 0 == num_solutions ) {
-        std::cout << "   Empty return." << std::endl;
+//        std::cout << "   Empty return." << std::endl;
         return std::vector< double >(); }
 
     // If the interval has no width, but has solutions, return the value.
     if ( std::abs( region.upper() - region.lower() ) < 0.000000001 ) {
-        std::cout << "   Singleton return: " << region.lower() << std::endl;
+//        std::cout << "   Singleton return: " << region.lower() << std::endl;
         return std::vector< double >( 1, region.lower() ); }
 
     // If 1 solution, root_find.
     if ( 1 == num_solutions ) {
-        std::cout << "   Root finding... ";
+//        std::cout << "   Root finding... ";
         std::vector< double > temp( 1,
                 root_find_solution( mf, region, lower_vals, upper_vals ) );
-        std::cout << temp[0] << std::endl;
+//        std::cout << temp[0] << std::endl;
         return temp;
     }
 
     // If > 1 solution, sub-divide region.
     double center = boost::numeric::median( region );
-    std::cout << "   Bisecting @ " << center << std::endl;
+//    std::cout << "   Bisecting @ " << center << std::endl;
     std::vector< double > center_vals
         = util::sorted_eigenvalues( mf.build( center ) );
     std::vector< double > solutions
