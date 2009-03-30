@@ -5,6 +5,7 @@
 
 // <cassert> is required for geev.hpp, but not included in it..
 #include <cassert>
+#include <iostream>
 #include <boost/foreach.hpp>
 #include <boost/numeric/bindings/lapack/geev.hpp>
 #include <boost/numeric/bindings/traits/ublas_matrix.hpp>

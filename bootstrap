@@ -8,4 +8,4 @@ autoconf
 automake --add-missing --copy --foreign --include-deps
 
 # go ahead and run the configure script
-CXXFLAGS="-O3 -g" ./configure --disable-static
+CXXFLAGS="-O3 -DNDEBUG" ./configure --disable-static
