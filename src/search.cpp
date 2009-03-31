@@ -45,7 +45,8 @@ double base_root_function( double E, const MatrixFactory &mf, int index ) {
 
 double root_find_solution( const MatrixFactory &mf, const interval_t &region,
                            const std::vector< double > lower_vals,
-                           const std::vector< double > upper_vals ) {
+                           const std::vector< double > upper_vals,
+                           double epsilon ) {
     int index = std::upper_bound( lower_vals.begin(), lower_vals.end(),
             region.lower() ) - lower_vals.begin();
     double flower = lower_vals[index] - region.lower();
@@ -53,47 +54,42 @@ double root_find_solution( const MatrixFactory &mf, const interval_t &region,
     return util::false_position(
             boost::bind( base_root_function, _1, boost::cref(mf),
                 index ),
-            region.lower(), region.upper(), flower, fupper ); }
+            region.lower(), region.upper(), flower, fupper, epsilon ); }
 
 // This is the main search algorithm for the (D)ERPA.
 std::vector< double >
 solve_region( const MatrixFactory &mf, const interval_t &region,
               const std::vector< double > lower_vals,
-              const std::vector< double > upper_vals ) {
+              const std::vector< double > upper_vals,
+              double epsilon ) {
     // Determine # solutions
     int num_solutions = get_num_solutions( lower_vals, region.lower(),
                                            upper_vals, region.upper() );
-//    std::cout << region << " -> " << num_solutions << std::endl;
     // If no solutions, return empty.
     if ( 0 == num_solutions ) {
-//        std::cout << "   Empty return." << std::endl;
         return std::vector< double >(); }
 
     // If the interval has no width, but has solutions, return the value.
-    if ( std::abs( region.upper() - region.lower() ) < 0.000000001 ) {
-//        std::cout << "   Singleton return: " << region.lower() << std::endl;
+    if ( std::abs( region.upper() - region.lower() ) < epsilon ) {
         return std::vector< double >( 1, region.lower() ); }
 
     // If 1 solution, root_find.
     if ( 1 == num_solutions ) {
-//        std::cout << "   Root finding... ";
         std::vector< double > temp( 1,
-                root_find_solution( mf, region, lower_vals, upper_vals ) );
-//        std::cout << temp[0] << std::endl;
-        return temp;
-    }
+                root_find_solution( mf, region, lower_vals, upper_vals,
+                    epsilon ) );
+        return temp; }
 
     // If > 1 solution, sub-divide region.
     double center = boost::numeric::median( region );
-//    std::cout << "   Bisecting @ " << center << std::endl;
     std::vector< double > center_vals
         = util::sorted_eigenvalues( mf.build( center ) );
     std::vector< double > solutions
         = solve_region( mf, interval_t( region.lower(), center ),
-                        lower_vals, center_vals );
+                        lower_vals, center_vals, epsilon );
     { std::vector< double > upper_solutions
         = solve_region( mf, interval_t( center, region.upper() ),
-                        center_vals, upper_vals );
+                        center_vals, upper_vals, epsilon );
         solutions.insert( solutions.end(), upper_solutions.begin(),
                 upper_solutions.end() ); }
     return solutions; }
@@ -119,7 +115,7 @@ solve_derpa_eigenvalues( double Emax,
             = util::sorted_eigenvalues( mf.build( region.upper() ) );
         // Solve inside region
         std::vector< double > region_results = solve_region( mf, region,
-                lower_vals, upper_vals );
+                lower_vals, upper_vals, epsilon );
         results.insert( results.end(), region_results.begin(),
                                        region_results.end() );
         lower = asymptotes[a]; }
