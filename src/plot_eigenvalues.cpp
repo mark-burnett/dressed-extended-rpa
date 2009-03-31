@@ -80,7 +80,6 @@ int main( int argc, char *argv[] ) {
     SEModelspace               sems = build_se_modelspace_from_sp( spms );
 
     std::cout << "Modelspaces built.  PH modelspace sizes:" << std::endl;
-    print_ph_modelspace_sizes( std::cout, 0, phms );
 
     // Particle-hole interaction
     std::cout << "Building interaction objects." << std::endl;
@@ -96,45 +95,35 @@ int main( int argc, char *argv[] ) {
         = build_dynamic_erpa_terms( Gph, Gpp, phms, ppms, hhms, sems, spms );
 
     int tz     =  0;
-    int parity = -1;
-    int J      =  3;
-//    int amax   =  2;
-    double dE  =  0.05;
+    int parity =  1;
+    int J      =  2;
+    double dE  =  0.001;
 
     // loop/build matricies
     std::cout << "Constructing static part of matrix for tz = " << tz
-        << ", J = " << J << ", parity = " << parity << std::endl;
+        << ", J = " << J << ", parity = " << parity
+        << " with " << ph_states.size() << " states." << std::endl;
     // Matrix Factory
     const std::vector< ParticleHoleState > &ph_states =
                 phms[tz + 1][(parity+1)/2][J];
     MatrixFactory mf(
             build_static_erpa_matrix( static_terms, dynamic_terms, ph_states ),
             dynamic_terms, spms, ph_states, J, parity, tz );
-    // Asymptotes
-    std::vector< double > asymptotes
-        = get_erpa_asymptotes( tz, parity, J, ppms, hhms, spms );
-//    BOOST_FOREACH( double a, asymptotes ) {
-//        std::cout << a << std::endl; }
 
     std::cout << "Generating eigenvalue plot data." << std::endl;
 
     std::ofstream outfile(
             config_vm["output_file"].as<std::string>().c_str() );
-    double E = 0;
-//    for ( int a = 0; a < amax; ++a ) {
-        while ( E < 7 ) { //asymptotes[a] + 2*dE ) {
-            std::vector< double > vals
-                = util::sorted_eigenvalues( mf.build( E ) );
-            outfile << E << " ";
-            BOOST_FOREACH( double v, vals ) { 
-                outfile << v << " ";
-            }
-            outfile << std::endl;
-            E += dE; }
+    for ( double E = -10; E < 10; E += dE ) {
+        std::vector< double > vals
+            = util::sorted_eigenvalues( mf.build( E ) );
+        outfile << E << " ";
+        BOOST_FOREACH( double v, vals ) { 
+            outfile << v << " "; }
         outfile << std::endl;
-//    }
+        E += dE; }
+    outfile << std::endl;
 
     std::cout << "Calculation complete." << std::endl;
 
-    return 0;
-}
+    return 0; }

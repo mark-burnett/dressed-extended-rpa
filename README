@@ -1,0 +1,63 @@
+OVERVIEW
+
+This code can calculate the Random Phase Approximation (RPA), at both first
+and second order (Extended RPA).  It can perform this calculation given
+an effective interaction, and a single paraticle modelspace, which can be
+mean-field or fragmented (which yields "Dressed" (E)RPA or D(E)RPA).
+
+COPYRIGHT AND DISCLAIMER
+
+You may use and modify this code freely for research purposes only.  No
+modifications of this code may be used for profit in any way.  If you provide
+someone with binaries of this code or of your modifications, you must make
+available the source code.  This code is not perfect, and I am not repsonsible
+for your misuse of the code which may cause damage or injury to property or
+persons.
+
+MODIFICATIONS AND CONTRIBUTIONS
+
+If you make a useful modification to the code, please, submit it to me and I
+will try to update the repository so that others may share the fruits of your
+labor!
+
+COMPILATION
+
+To compile the code, you will need the following libraries:
+
+lapack (the shared libraries, not the source)
+boost (www.boost.org)
+boost numeric bindings (for lapack)
+google testing suite (gtest)
+
+As of this writing, the boost numeric bindings are not yet a part of boost, but
+are being integrated into it.
+
+To compile the code and run some basic tests on it, simply type:
+./boostrap
+make check
+
+NOTE: on OSX you will need to change libtoolize to glibtoolize in the boostrap
+script.
+
+The following binaries should magically appear in the project's bin directory:
+drpa
+plot_eigenvalues - plots the ERPA eigenvalues as a function of energy
+erpa
+
+They are all run with the form:
+<command> --config example_config.cfg
+
+The config files are simple -- they mostly contain input and output file names.
+
+BUGS
+
+If you find a bug, please write a unit test that reproduces the bug.  Please,
+try to make sure that the unit test requires as little outside input as
+possible (it shouldn't be a full calculation).
+
+You can send me a description of the bug, along with the test that reproduces it
+at mburnett@physics.wustl.edu.
+
+Enjoy,
+Mark Burnett
+March 2009
