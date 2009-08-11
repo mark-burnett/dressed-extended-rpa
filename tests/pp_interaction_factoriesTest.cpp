@@ -6,6 +6,8 @@
 #include "modelspace_factories.h"
 #include "pp_interaction_factories.h"
 
+#include <cmath>
+
 /* Single particle modelspace map for test interaction file
  * mhj file index - 1 -> my modelspace index
  * 0 -> 0

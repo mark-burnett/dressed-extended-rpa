@@ -19,7 +19,9 @@ src_libderpa_la_SOURCES = src/angular_momentum.cpp src/io.cpp src/pandya.cpp\
 						  src/terms/screening.cpp\
 						  src/terms/ladder.cpp\
 						  src/terms/self_energy.cpp\
-						  src/term_factories.cpp
+						  src/term_factories.cpp\
+						  src/normalization.cpp\
+						  src/fit.cpp
 
 # --- Main programs ---
 bin_PROGRAMS     = bin/drpa bin/erpa bin/plot_eigenvalues
@@ -47,7 +49,8 @@ bin_test_SOURCES = tests/test_main.cpp\
 				   tests/drpaTest.cpp\
 				   tests/determinantTest.cpp\
 				   tests/intervalsTest.cpp\
-				   tests/searchTest.cpp
+				   tests/searchTest.cpp\
+				   tests/fitTest.cpp
 bin_test_LDADD   = src/libderpa.la
 LIBS             = $(GTEST_LIBS) $(BOOST_PROGRAM_OPTIONS_LIBS) $(LAPACK_LIBS)
 

@@ -83,7 +83,7 @@ double SE_particle_line( const ParticleHoleState &ph, double E,
         // make list of outter left side states
         // loop over outter left states
 //        assert( 0 != sems.ph[Jp][ia][iaf].size() );
-        if ( Jp < boost::numeric_cast<int>(sems.ph.size()) )
+        if ( Jp < boost::numeric_cast<int>(sems.ph.size()) ) {
             BOOST_FOREACH( pp_t left, sems.ph[Jp][ia][iaf] ) {
             //      make list of inner right side states
             //      loop over inner right side states
@@ -100,10 +100,10 @@ double SE_particle_line( const ParticleHoleState &ph, double E,
                         ( E - (   spms.pfrag[right.ip1][right.ip1f].E
                                 + spms.pfrag[right.ip2][right.ip2f].E
                                 - spms.hfrag[ib][ibf].E
-                                - spms.hfrag[left.ip2][left.ip2f].E ) ); } }
+                                - spms.hfrag[left.ip2][left.ip2f].E ) ); } } }
         //  make list of outter right side states
         //  loop over outter right states
-        if ( Jp < boost::numeric_cast<int>(sems.pp.size()) )
+        if ( Jp < boost::numeric_cast<int>(sems.pp.size()) ) {
             BOOST_FOREACH( pp_t left, sems.pp[Jp][ia][iaf] ) {
             //      make inner left states
             //      loop over inner left states
@@ -120,7 +120,8 @@ double SE_particle_line( const ParticleHoleState &ph, double E,
                         ( spms.pfrag[ia][iaf].E - (
                               spms.hfrag[right.ip1][right.ip1f].E
                             + spms.hfrag[right.ip2][right.ip2f].E
-                            - spms.pfrag[left.ip2][left.ip2f].E ) ); } }
+                            - spms.pfrag[left.ip2][left.ip2f].E ) ); } } }
+
         result += JpTerm * ( 2 * Jp + 1 ); }
     return result / ( 4 * spms.j[ia] + 2 ); }
 
@@ -146,27 +147,28 @@ double SE_hole_line    ( const ParticleHoleState &ph, double E,
         double JpTerm = 0;
         // make list of outter left side states
         // loop over outter left states
-        if ( Jp < boost::numeric_cast<int>(sems.hh.size()) )
-        BOOST_FOREACH( pp_t left, sems.hh[Jp][ib][ibf] ) {
-        //      make list of inner right side states
-        //      loop over inner right side states
-            int tz =
-                boost::numeric_cast<int>(spms.tz[left.ip1] + spms.tz[left.ip2]);
-            int parity = spms.parity[left.ip1] * spms.parity[left.ip2];
-            if ( Jp >= boost::numeric_cast<int>(
-                        ppms[1+tz][(parity+1)/2].size()) )
-                continue;
-            BOOST_FOREACH( pp_t right, ppms[1+tz][(parity+1)/2][Jp] ) {
-        //      add contribution
-                JpTerm -= std::pow( Gpp( left, right ), 2 ) /
-                    ( spms.hfrag[ib][ibf].E - (
-                          spms.pfrag[right.ip1][right.ip1f].E
-                        + spms.pfrag[right.ip2][right.ip2f].E
-                        - spms.hfrag[left.ip2][left.ip2f].E ) ); } }
+        if ( Jp < boost::numeric_cast<int>(sems.hh.size()) ) {
+            BOOST_FOREACH( pp_t left, sems.hh[Jp][ib][ibf] ) {
+            //      make list of inner right side states
+            //      loop over inner right side states
+                int tz =
+                    boost::numeric_cast<int>( spms.tz[left.ip1]
+                                            + spms.tz[left.ip2] );
+                int parity = spms.parity[left.ip1] * spms.parity[left.ip2];
+                if ( Jp >= boost::numeric_cast<int>(
+                            ppms[1+tz][(parity+1)/2].size()) )
+                    continue;
+                BOOST_FOREACH( pp_t right, ppms[1+tz][(parity+1)/2][Jp] ) {
+            //      add contribution
+                    JpTerm -= std::pow( Gpp( left, right ), 2 ) /
+                        ( spms.hfrag[ib][ibf].E - (
+                              spms.pfrag[right.ip1][right.ip1f].E
+                            + spms.pfrag[right.ip2][right.ip2f].E
+                            - spms.hfrag[left.ip2][left.ip2f].E ) ); } } }
         //  make list of outter right side states
         //  loop over outter right states
 //        assert( 0 != sems.hp[Jp][ib][ibf].size() );
-        if ( Jp < boost::numeric_cast<int>(sems.hp.size()) )
+        if ( Jp < boost::numeric_cast<int>(sems.hp.size()) ) {
             BOOST_FOREACH( pp_t left, sems.hp[Jp][ib][ibf] ) {
             //      make inner left states
             //      loop over inner left states
@@ -183,7 +185,7 @@ double SE_hole_line    ( const ParticleHoleState &ph, double E,
                         ( E - (   spms.pfrag[ia][iaf].E
                                 + spms.pfrag[left.ip2][left.ip2f].E
                                 - spms.hfrag[right.ip1][right.ip1f].E
-                                - spms.hfrag[right.ip2][right.ip2f].E ) ); } }
+                                - spms.hfrag[right.ip2][right.ip2f].E ) ); } } }
         result += JpTerm * ( 2 * Jp + 1 ); }
     return result / ( 4 * spms.j[ib] + 2 ); }
 

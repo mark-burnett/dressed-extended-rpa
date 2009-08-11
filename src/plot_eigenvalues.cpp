@@ -100,12 +100,12 @@ int main( int argc, char *argv[] ) {
     double dE  =  0.001;
 
     // loop/build matricies
+    const std::vector< ParticleHoleState > &ph_states =
+                phms[tz + 1][(parity+1)/2][J];
     std::cout << "Constructing static part of matrix for tz = " << tz
         << ", J = " << J << ", parity = " << parity
         << " with " << ph_states.size() << " states." << std::endl;
     // Matrix Factory
-    const std::vector< ParticleHoleState > &ph_states =
-                phms[tz + 1][(parity+1)/2][J];
     MatrixFactory mf(
             build_static_erpa_matrix( static_terms, dynamic_terms, ph_states ),
             dynamic_terms, spms, ph_states, J, parity, tz );

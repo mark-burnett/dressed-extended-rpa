@@ -40,24 +40,24 @@ EXTRA_DIST=bootstrap
 GTEST_CFLAGS=`gtest-config --cppflags --cxxflags`
 GTEST_LIBS=`gtest-config --ldflags  --libs`
 
-AC_SUBST( GTEST_CFLAGS )
-AC_SUBST( GTEST_LIBS )
+AC_SUBST(GTEST_CFLAGS)
+AC_SUBST(GTEST_LIBS)
 
 # Boost numeric bindings.
 BOOST_NUMERIC_BINDINGS_CFLAGS="-I/usr/local/include/boost-numeric-bindings"
 
-AC_SUBST( BOOST_NUMERIC_BINDINGS_CFLAGS )
+AC_SUBST(BOOST_NUMERIC_BINDINGS_CFLAGS)
 
 # Lapack library
 LAPACK_CFLAGS=""
 LAPACK_LIBS="-llapack -lgfortran"
 
-AC_SUBST( LAPACK_CFLAGS )
-AC_SUBST( LAPACK_LIBS )
+AC_SUBST(LAPACK_CFLAGS)
+AC_SUBST(LAPACK_LIBS)
 
 # Boost program options library
 BOOST_PROGRAM_OPTIONS_CFLAGS=""
-BOOST_PROGRAM_OPTIONS_LIBS="-lboost_program_options"
+BOOST_PROGRAM_OPTIONS_LIBS="-lboost_program_options-mt"
 
 AC_SUBST(BOOST_PROGRAM_OPTIONS_CFLAGS)
 AC_SUBST(BOOST_PROGRAM_OPTIONS_LIBS)
@@ -71,7 +71,7 @@ AC_SUBST(CXXFLAGS)
 # Project header files
 #FIXME this should probably be organized without an include dir
 PROJECT_INCLUDES=-I`pwd`/src
-AC_SUBST( PROJECT_INCLUDES )
+AC_SUBST(PROJECT_INCLUDES)
 
 # ---------------------------------------------------------------------
 # Checks for typedefs, structures, and compiler characteristics.
