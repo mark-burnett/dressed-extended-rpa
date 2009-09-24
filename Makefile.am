@@ -20,8 +20,8 @@ src_libderpa_la_SOURCES = src/angular_momentum.cpp src/io.cpp src/pandya.cpp\
 						  src/terms/ladder.cpp\
 						  src/terms/self_energy.cpp\
 						  src/term_factories.cpp\
-						  src/normalization.cpp\
 						  src/fit.cpp
+#						  src/normalization.cpp
 
 # --- Main programs ---
 bin_PROGRAMS     = bin/drpa bin/erpa bin/plot_eigenvalues

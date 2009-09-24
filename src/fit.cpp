@@ -1,5 +1,4 @@
 #include <vector>
-#include <iostream>
 
 #include <boost/math/special_functions/pow.hpp>
 
@@ -71,7 +70,7 @@ optimize( const fitness_f &f, const vector_t &pi, const vector_t &ni,
     for ( int i = 0; i < max_iter; ++i ) {
         // Get the chi-squared for this point
         x2 = f( current );
-        std::cout << i << " " << x2 << std::endl;
+//        std::cout << i << " " << x2 << std::endl;
         // Are we good enough?
         if ( x2 < error )
             break;
