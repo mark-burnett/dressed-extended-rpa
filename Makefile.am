@@ -52,7 +52,8 @@ bin_test_SOURCES = tests/test_main.cpp\
 				   tests/searchTest.cpp\
 				   tests/fitTest.cpp
 bin_test_LDADD   = src/libderpa.la
-LIBS             = $(GTEST_LIBS) $(BOOST_PROGRAM_OPTIONS_LIBS) $(LAPACK_LIBS)
+LIBS             = "-lgtest"
+#LIBS             = $(GTEST_LIBS) $(BOOST_PROGRAM_OPTIONS_LIBS) $(LAPACK_LIBS)
 
 TESTS = bin/test
 
