@@ -84,7 +84,7 @@ int main( int argc, char *argv[] ) {
     std::cout << "Modelspaces built." << std::endl;
     print_ph_modelspace_sizes( std::cout, 0, phms );
 
-    // Particle-hole interaction
+    // Setup particle-particle and particle-hole interactions
     std::cout << "Building interaction objects." << std::endl;
     PPInteraction Gpp = build_gmatrix_from_mhj_file(
             config_vm["interaction_file"].as<std::string>(), spms );

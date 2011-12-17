@@ -5,20 +5,19 @@ and second order (Extended RPA).  It can perform this calculation given
 an effective interaction, and a single paraticle modelspace, which can be
 mean-field or fragmented (which yields "Dressed" (E)RPA or D(E)RPA).
 
-COPYRIGHT AND DISCLAIMER
 
-You may use and modify this code freely for research purposes only.  No
-modifications of this code may be used for profit in any way.  If you provide
-someone with binaries of this code or of your modifications, you must make
-available the source code.  This code is not perfect, and I am not repsonsible
-for your misuse of the code which may cause damage or injury to property or
-persons.
+COPYRIGHT
+
+This code is distributed under the GNU General Purpose License version 3.  See
+LICENSE for more details.
+
 
 MODIFICATIONS AND CONTRIBUTIONS
 
 If you make a useful modification to the code, please, submit it to me and I
 will try to update the repository so that others may share the fruits of your
 labor!
+
 
 COMPILATION
 
@@ -33,10 +32,10 @@ As of this writing, the boost numeric bindings are not yet a part of boost, but
 are being integrated into it.
 
 To compile the code and run some basic tests on it, simply type:
-./boostrap
+./bootstrap
 make check
 
-NOTE: on OSX you will need to change libtoolize to glibtoolize in the boostrap
+NOTE: on OSX you will need to change libtoolize to glibtoolize in the bootstrap
 script.
 
 The following binaries should magically appear in the project's bin directory:
@@ -49,14 +48,23 @@ They are all run with the form:
 
 The config files are simple -- they mostly contain input and output file names.
 
+
+INPUTS
+
+This code requires both a model space and an interaction as inputs.  Samples
+are provided, but you are on your own for generating more realistic
+interactions and model spaces.
+
+
 BUGS
+
+The ERPA eigenvectors are not properly normalized.  If you decide to use this
+code and write the normalization (it shouldn't be difficult), please let me
+know and I will include it.
 
 If you find a bug, please write a unit test that reproduces the bug.  Please,
 try to make sure that the unit test requires as little outside input as
 possible (it shouldn't be a full calculation).
-
-You can send me a description of the bug, along with the test that reproduces it
-at mburnett@physics.wustl.edu.
 
 Enjoy,
 Mark Burnett

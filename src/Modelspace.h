@@ -97,6 +97,14 @@ struct ParticleParticleState {
     int J;
 };
 
+struct TwoParticleTwoHoleState {
+    TwoParticleTwoHoleState( const ParticleParticleState &npp,
+                             const ParticleParticleState &nhh )
+                           : pp(npp), hh(nhh) { }
+    ParticleParticleState pp;
+    ParticleParticleState hh;
+};
+
 // See comment at top of file for usage.
 typedef std::vector< std::vector< std::vector<
     std::vector< ParticleHoleState >
@@ -149,5 +157,14 @@ void print_sp_state( std::ostream &o, int i,
 void print_ph_state( std::ostream &o,
                      const ParticleHoleState        &ph,
                      const SingleParticleModelspace &spms );
+
+// TPTH Functions
+double tpth_energy( const TwoParticleTwoHoleState &tpth,
+                    const SingleParticleModelspace &spms );
+
+std::vector< TwoParticleTwoHoleState >
+build_tpth_states( int tz, int parity, int J,
+                   const ParticleParticleModelspace &ppms,
+                   const ParticleParticleModelspace &hhms );
 
 #endif // _MODELSPACE_H_

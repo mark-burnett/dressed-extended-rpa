@@ -22,6 +22,7 @@ src_libderpa_la_SOURCES = src/angular_momentum.cpp src/io.cpp src/pandya.cpp\
 						  src/term_factories.cpp\
 						  src/fit.cpp
 #						  src/normalization.cpp
+LIBS             = $(GTEST_LIBS) $(BOOST_PROGRAM_OPTIONS_LIBS) $(LAPACK_LIBS)
 
 # --- Main programs ---
 bin_PROGRAMS     = bin/drpa bin/erpa bin/plot_eigenvalues
@@ -52,7 +53,7 @@ bin_test_SOURCES = tests/test_main.cpp\
 				   tests/searchTest.cpp\
 				   tests/fitTest.cpp
 bin_test_LDADD   = src/libderpa.la
-LIBS             = "-lgtest"
+#LIBS             = "-lgtest"
 #LIBS             = $(GTEST_LIBS) $(BOOST_PROGRAM_OPTIONS_LIBS) $(LAPACK_LIBS)
 
 TESTS = bin/test

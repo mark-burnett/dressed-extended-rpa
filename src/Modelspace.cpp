@@ -137,3 +137,35 @@ void print_ph_state( std::ostream &o,
     print_sp_state( o, ph.ih, spms );
     o << " " << ph.J << ")";
 }
+
+// TPTH Modelspace Helpers
+double tpth_energy( const TwoParticleTwoHoleState &tpth,
+                    const SingleParticleModelspace &spms ) {
+    return pp_energy( tpth.pp, spms ) - hh_energy( tpth.hh, spms ); }
+    
+std::vector< TwoParticleTwoHoleState >
+build_tpth_states( int tz, int parity, int J,
+                   const ParticleParticleModelspace &ppms,
+                   const ParticleParticleModelspace &hhms ) {
+    std::vector< TwoParticleTwoHoleState > result;
+    for ( int pptz = -1; pptz <= 1; ++pptz ) {
+        int hhtz = pptz - tz;
+        for ( int ppparity = -1; ppparity <= 1; ppparity += 2 ) {
+            int hhparity = parity * ppparity;
+            int ppJmax = ppms[pptz+1][(ppparity+1)/2].size() - 1;
+            for ( int ppJ = 0; ppJ <= ppJmax; ++ppJ ) {
+                const std::vector< ParticleParticleState > &pp_states
+                    = ppms[1+pptz][(ppparity+1)/2][ppJ];
+                int hhJabsmax = boost::numeric_cast<int>(
+                           hhms[1+hhtz][(hhparity+1)/2].size() - 1);
+                int hhJmin = std::min( std::abs( ppJ - J ), hhJabsmax );
+                int hhJmax = std::min( ppJ + J, hhJabsmax );
+                for ( int hhJ = hhJmin; hhJ <= hhJmax; ++hhJ ) {
+                    const std::vector< ParticleParticleState > &hh_states
+                        = hhms[1+hhtz][(hhparity+1)/2][hhJ];
+                    BOOST_FOREACH( const ParticleParticleState &pp,
+                            pp_states ) {
+                        BOOST_FOREACH( const ParticleParticleState &hh,
+                                hh_states ) {
+                            result.push_back( TwoParticleTwoHoleState( pp, hh ) ); } } } } } }
+    return result; }
